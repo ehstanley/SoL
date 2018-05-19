@@ -1,15 +1,15 @@
 rm(list=ls())
 cat("\14")
 
+
+setwd("C:/Users/Nobody/Documents/LocalR/SoL/SoL_data")
+#setwd("D:/ehstanley/Dropbox/CSI local folder_UW/SoL")
+
+SoL3 <- read.csv("SoL_data.csv", stringsAsFactors = F)
+
+
 library(dplyr)
 library(maps)
-
-
-setwd("C:/Users/Nobody/Dropbox/CSI local folder_UW/SoL")
-setwd("D:/ehstanley/Dropbox/CSI local folder_UW/SoL")
-
-SoL3 <- read.csv("SoL_lagos.csv", stringsAsFactors = F)
-
 
 ####Consider time frame- all years or truncated?
 #SoL <- SoL[which(SoL$year > 2000),]
@@ -172,7 +172,6 @@ names(Grand.med.tn_measured) <-c("lagoslakeid", "Median_tn_measured")
 
 
 ### merge averages and add in lake data on lat, long,lake area, state
-library(dplyr)
 Med1 <- full_join(Grand.med.chl, Grand.med.tp, by = NULL, copy=FALSE)
 Med2 <- full_join(Med1, Grand.med.secchi, by = NULL, copy=FALSE)
 Med3 <- full_join(Med2, Grand.med.color, by = NULL, copy=FALSE)
@@ -192,8 +191,6 @@ SoL.Med <- merge(Med10, lakes, by = "lagoslakeid")
 #save file name depending on year duration
 #write.csv(SoL.Med, file = ("SoL_LakeMedians.csv"), row.names = F) 
 write.csv(SoL.Med, file = ("SoL_LakeMedians2010.csv"), row.names = F) 
-
-SoL.Med <- read.csv("C:/Users/Nobody/Dropbox/CSI local folder_UW/SoL/SoL_LakeMedians2010.csv")
 
 
 #probably a much easier way to do this, but making some data frames for mapping
@@ -226,10 +223,10 @@ chl_tp.sites <- chl_tp.sites[!is.na(chl_tp.sites$Median_tp), ]
 Basic2.sites <- chl_tp.sites[, 12:13]
 
 chl_tp_secchi.sites <- chl_tp.sites[!is.na(chl_tp.sites$Median_secchi),]
-Big3.sites <- chl_tp_secchi.sites[, 12:13]
+Big3.sites <- chl_tp_secchi.sites[, 13:14]
 
 All4 <- chl_tp_secchi.sites[!is.na(chl_tp_secchi.sites$Median_tn), ]
-All4.sites <- All4[, 12:13]
+All4.sites <- All4[, 13:14]
 
 ## create a map of where data come from values 
 
@@ -329,21 +326,30 @@ map(database = "state", regions=c("Minnesota", "Wisconsin", "Iowa", "Illinois","
 points(all.sites2$nhd_long, all.sites2$nhd_lat, cex = .1, pch=20, col = "black")
 title("All lakes with any data (n = 64819)")
 
+#map with data for all 4 indicators used to assess trophic state
+map(database = "state", regions=c("Minnesota", "Wisconsin", "Iowa", "Illinois","Missouri",
+                                  "Indiana","Michigan","Ohio", "Pennsylvania","New York",
+                                  "New Jersey", "Connecticut","Rhode Island","Massachusetts",
+                                  "Vermont", "New Hampshire","Maine"), fill = FALSE)
+points(All4.sites$nhd_long, All4.sites$nhd_lat, cex = .1, pch=20, col = "blue")
+title("Lakes with data for all 4 trophic state indicators (n = 5096)")
+
 #######need to update this- non-mod and general check; somethings off
 no3_NC1 <-SoLno2no3[which(SoLno2no3$no2no3_censorcode == "NC1"),]
 no3_NC2 <-SoLno2no3[which(SoLno2no3$no2no3_censorcode == "NC2"),]
 no3_NC3 <-SoLno2no3[which(SoLno2no3$no2no3_censorcode == "NC3"),]
 no3_NC4 <-SoLno2no3[which(SoLno2no3$no2no3_censorcode == "NC4"),]
-no3_above <-rbind(no3_NC1, no3_NC2, no3_NC3, no3_NC4)
+no3_NA <-SoLno2no3[which(SoLno2no3$no2no3_censorcode == "NA"),]
+no3_above <-rbind(no3_NC1, no3_NC2, no3_NC3, no3_NC4, no3_NA)
 no3_LE1 <-SoLno2no3[which(SoLno2no3$no2no3_censorcode == "LE1"),]
 no3_LE2 <-SoLno2no3[which(SoLno2no3$no2no3_censorcode == "LE2"),]
 no3_LE3 <-SoLno2no3[which(SoLno2no3$no2no3_censorcode == "LE3"),]
 no3_LE4 <-SoLno2no3[which(SoLno2no3$no2no3_censorcode == "LE4"),]
 no3_below <-rbind(no3_LE1, no3_LE2, no3_LE3, no3_LE4)
 above1<- no3_above[duplicated(no3_above[1]),]
-above2 <-above1[, 23:24]
+above2 <-above1[, 33:34]
 below<- no3_below[duplicated(no3_below[1]),]
-below2 <- below[, 23:24]
+below2 <- below[, 33:34]
 
 map(database = "state", regions=c("Minnesota", "Wisconsin", "Iowa", "Illinois","Missouri",
                                   "Indiana","Michigan","Ohio", "Pennsylvania","New York",
@@ -352,17 +358,7 @@ map(database = "state", regions=c("Minnesota", "Wisconsin", "Iowa", "Illinois","
 points(above2$nhd_long, above2$nhd_lat, cex = 1, pch=20, col = "gray")
 par(new=TRUE)
 points(below2$nhd_long, below2$nhd_lat, cex = 0.1, pch=20, col = "cyan")
-title("Lakes with nitrate above (gray; n= 41211) and below (cyan; n=15740) detection limit")
-
-##generate some maps of data availability by variable
-SoL.Med2 <- data.frame(na.omit(SoL.Med1))
-SoL.Med2 <- SoL.Med2[, 5:6]
-SoL.Med3 <- SoL.Med1[, c("Median_chl", "Median_tp", "nhd_lat", "nhd_long")]
-SoL.Med3 <- na.omit(SoL.Med3)
-SoL.Med3 <- SoL.Med3[, 3:4]
-
-##set of maps to show how lakes vanish as more variables are required to assess trophic status
-#sites with chlorophyll
+title("Nitrate above DL or NA (gray; n= 47909) and below DL (cyan; n=19643)")
 
 
 # Number of lakes sampled/year by variable
@@ -408,8 +404,8 @@ YR1 <- data.frame(replace(YR1, is.na(YR1), 0))
 YR1$total <- YR1$chl+YR1$color+YR1$tkn+YR1$doc+YR1$nh4+YR1$no2no3+YR1$secchi+YR1$tn+YR1$tp+YR1$tnmeasured
 plot(YR1$year, YR1$total)
 
-write.csv(YR1, file = ("Lake_by_year.csv"), row.names = F)
-YR1 <- read.csv("Lake_by_year.csv")
+#write.csv(YR1, file = ("Lake_by_year.csv"), row.names = F)
+#YR1 <- read.csv("Lake_by_year.csv")
 
 N_lakes <- summarise_all(YR1, funs(sum))
 N_lakes <- N_lakes[2:10]
@@ -449,6 +445,34 @@ plot(YR1$year, YR1$doc, xlim = c(1950, 2010), ylim = c(0, 4500), xlab = "",
      ylab = "", type = "o", pch = 16, col = "brown")
 legend("topleft", legend = c("secchi", "chla", "tp", "tn", "tkn", "no2no3", "nh4", "doc"), cex = 0.8,
        lty = c(1,1), col = c("red", "green", "blue", "salmon", "burlywood", "cyan", "gray", "brown"))
+
+
+plot(YR1$year, YR1$secchi, xlim = c(1950, 2010), ylim = c(0, 4500), xlab = "", 
+     ylab = "", type = "l", col = "red")
+par(new=T)
+plot(YR1$year, YR1$chl, xlim = c(1950, 2010), ylim = c(0,4500), xlab = "Year",
+     ylab= "Number of lakes", type = "l", col= "green")
+par(new=TRUE)
+plot(YR1$year, YR1$tp, xlim = c(1950, 2010), ylim = c(0, 4500), xlab= "", 
+     ylab = "", type = "l", col= "blue")
+par(new=T)
+plot(YR1$year, YR1$tnmeasured, xlim = c(1950, 2010), ylim = c(0, 4500), xlab= "", 
+     ylab = "", type = "l", col = "salmon")
+par(new=T)
+plot(YR1$year, YR1$tkn, xlim = c(1950, 2010), ylim = c(0, 4500), xlab = "", 
+     ylab = "", type = "l", col = "burlywood")
+par(new=T)
+plot(YR1$year, YR1$no2no3,  xlim = c(1950, 2010), ylim = c(0, 4500), xlab = "", 
+     ylab = "", type = "l", col= "cyan")
+par(new=T)
+plot(YR1$year, YR1$nh4,  xlim = c(1950, 2010), ylim = c(0, 4500), xlab = "", 
+     ylab = "", type = "l", col= "gray")
+par(new=T)
+plot(YR1$year, YR1$doc, xlim = c(1950, 2010), ylim = c(0, 4500), xlab = "", 
+     ylab = "", type = "l", col = "brown")
+legend("topleft", legend = c("secchi", "chla", "tp", "tn", "tkn", "no2no3", "nh4", "doc"), cex = 0.8,
+       lty = c(1,1), col = c("red", "green", "blue", "salmon", "burlywood", "cyan", "gray", "brown"))
+
 
 
 #sampling effort by day of year- how many data points are there for each day of year?
@@ -508,9 +532,7 @@ Jday2 <- left_join(Jday2, tn.day, by = "Yr.day")
 Jday2 <- left_join(Jday2, tp.day, by = "Yr.day")
 
 
-##Add in-- remove LTER or university sampling programs for nitrogen...
-
-plot(Jday2$Yr.day, Jday2$secchi_f.x,  ylim = c(0, 7000), xlab = "Day of the Year",
+plot(Jday2$Yr.day, Jday2$secchi_f,  ylim = c(0, 7000), xlab = "Day of the Year",
      ylab= "Data Count", type = "l", col= "red")
 par(new=TRUE)
 plot(Jday2$Yr.day, Jday2$chl_f,  ylim = c(0, 7000), xlab = "", 
