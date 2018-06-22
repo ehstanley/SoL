@@ -5,14 +5,12 @@ cat("\14")
 setwd("C:/Users/Nobody/Documents/LocalR/SoL/SoL_data")
 #setwd("D:/ehstanley/Dropbox/CSI local folder_UW/SoL")
 
-SoL3 <- read.csv("SoL_data.csv", stringsAsFactors = F)
+SoL3 <- readRDS("SoL_data.rds")
 
 
 library(dplyr)
 library(maps)
 
-####Consider time frame- all years or truncated?
-#SoL <- SoL[which(SoL$year > 2000),]
 
 ## find stats of a variable by lake for each year, + plot of # of lakes sampled/yr
 ##Code borrowed from SKO
@@ -91,7 +89,7 @@ abline(h=600, col ="azure4", lwd=2)
 boxplot(log(lake.average.tn$med)~lake.average.tn$year, ylab="log(TN)", main = "TN combined")
 abline(h=6.39693, col ="azure4", lwd=2)
 
-TKN
+#TKN
 SoLtkn <- SoL3[!is.na(SoL3$tkn), ]
 lake.average.tkn = aggregate(SoLtkn$tkn, SoLtkn[,c("lagoslakeid", "year")], 
                              FUN=function(x) c(mean=mean(x),sd=sd(x), covar=sd(x)/mean(x), median=median(x), nobs=length(x)))
@@ -123,6 +121,15 @@ SoLtn_measured <- SoL3[!is.na(SoL3$tn), ]
 lake.average.tn_measured = aggregate(SoLtn_measured$tn, SoLtn_measured[,c("lagoslakeid", "year")], 
                                      FUN=function(x) c(mean=mean(x),sd=sd(x), covar=sd(x)/mean(x), median=median(x), nobs=length(x)))
 lake.average.tn_measured = data.frame(lagoslakeid = lake.average.tn_measured$lagoslakeid, year = lake.average.tn_measured$year, mean = lake.average.tn_measured$x[,1], sd = lake.average.tn_measured$x[,2], coef.var = lake.average.tn_measured$x[,3], med = lake.average.tn_measured$x[,4], nobs = lake.average.tn_measured$x[,5])
+
+chl.N = sum(lake.average.chla$nobs)
+color.N = sum(lake.average.color$nobs)
+doc.N = sum(lake.average.doc$nobs)
+nh4.N = sum(lake.average.nh4$nobs)
+no2no3.N = sum(lake.average.no2no3$nobs)
+secchi.N = sum(lake.average.secchi$nobs)
+tn.N = sum(lake.average.tn$nobs)
+tp.N = sum(lake.average.tp$nobs)
 
 
 ###Assessing long-term eutrophication status for lakes- from ASLO 2017 talk
@@ -183,14 +190,13 @@ Med8 <- full_join(Med7, Grand.med.tn, by = NULL, copy=FALSE)
 Med9 <- full_join(Med8, Grand.med.tkn, by = NULL, copy=FALSE)
 Med10 <- full_join(Med9, Grand.med.tn_measured, by = NULL, copy=FALSE)
 
-#want to add in state names; seems to be a problem with state_zoneids, so I got
-#state assignments from this prior version
-lakes <-read.csv("lakes.csv")
+# add in state names and lake attributes
+lakes = readRDS("lakes.rds")
 SoL.Med <- merge(Med10, lakes, by = "lagoslakeid")
 
 #save file name depending on year duration
 #write.csv(SoL.Med, file = ("SoL_LakeMedians.csv"), row.names = F) 
-write.csv(SoL.Med, file = ("SoL_LakeMedians2010.csv"), row.names = F) 
+#write.csv(SoL.Med, file = ("SoL_LakeMedians2010.csv"), row.names = F) 
 
 
 #probably a much easier way to do this, but making some data frames for mapping
@@ -228,13 +234,14 @@ Big3.sites <- chl_tp_secchi.sites[, 13:14]
 All4 <- chl_tp_secchi.sites[!is.na(chl_tp_secchi.sites$Median_tn), ]
 All4.sites <- All4[, 13:14]
 
-## create a map of where data come from values 
 
+
+## create a map of where data come from values 
 map(database = "state", regions=c("Minnesota", "Wisconsin", "Iowa", "Illinois","Missouri",
                                   "Indiana","Michigan","Ohio", "Pennsylvania","New York",
                                   "New Jersey", "Connecticut","Rhode Island","Massachusetts",
                                   "Vermont", "New Hampshire","Maine"), fill = FALSE)
-points(chl.sites$nhd_long, chl.sites$nhd_lat, cex = 0.1, pch=20, col ="darkgreen")
+points(chl.sites$nhd_long, chl.sites$nhd_lat, cex = 0.01, pch=20, col ="darkgreen")
 #points(chl_eu.sites$nhd_long, chl_eu.sites$nhd_lat, cex = 0.1, pch =20, col= "green")
 title("Chl a (n= 8525 lakes)")
 #title("Chlorophyll a")
@@ -265,7 +272,7 @@ points(TN.sites$nhd_long, TN.sites$nhd_lat, cex = .1, pch=20, col = "darkgoldenr
 title("TN (n = 6553 lakes)")
 #points(TN_eu.sites$nhd_long, TN_eu.sites$nhd_lat, cex = 0.1, pch =20, col= "goldenrod3")
 
-par(mfrow=c(1,1))
+
 map(database = "state", regions=c("Minnesota", "Wisconsin", "Iowa", "Illinois","Missouri",
                                   "Indiana","Michigan","Ohio", "Pennsylvania","New York",
                                   "New Jersey", "Connecticut","Rhode Island","Massachusetts",
@@ -324,7 +331,38 @@ map(database = "state", regions=c("Minnesota", "Wisconsin", "Iowa", "Illinois","
                                   "New Jersey", "Connecticut","Rhode Island","Massachusetts",
                                   "Vermont", "New Hampshire","Maine"), fill = FALSE)
 points(all.sites2$nhd_long, all.sites2$nhd_lat, cex = .1, pch=20, col = "black")
-title("All lakes with any data (n = 64819)")
+title("All lakes with any data (n = 14229)")
+
+troph.sites <-rbind(secchi.sites, chl.sites, TP.sites)
+tr.sites <-unique(troph.sites)
+map(database = "state", regions=c("Minnesota", "Wisconsin", "Iowa", "Illinois","Missouri",
+                                  "Indiana","Michigan","Ohio", "Pennsylvania","New York",
+                                  "New Jersey", "Connecticut","Rhode Island","Massachusetts",
+                                  "Vermont", "New Hampshire","Maine"), fill = FALSE)
+points(tr.sites$nhd_long, tr.sites$nhd_lat, cex = .1, pch=20, col = "limegreen")
+title("All lakes with any Secchi, chl, TP data (n = 13954)")
+
+carbon.sites <-rbind(color.sites, DOC.sites)
+c.sites <-unique(carbon.sites)
+nitrogen.sites <-rbind(nh4.sites, no3.sites, tkn.sites, TN.sites)
+n.sites <-unique(nitrogen.sites)
+
+map(database = "state", regions=c("Minnesota", "Wisconsin", "Iowa", "Illinois","Missouri",
+                                  "Indiana","Michigan","Ohio", "Pennsylvania","New York",
+                                  "New Jersey", "Connecticut","Rhode Island","Massachusetts",
+                                  "Vermont", "New Hampshire","Maine"), fill = FALSE)
+points(c.sites$nhd_long, c.sites$nhd_lat, cex = .1, pch=20, col = "orange")
+title("All lakes with any color or DOC data (n = 6641)")
+
+map(database = "state", regions=c("Minnesota", "Wisconsin", "Iowa", "Illinois","Missouri",
+                                  "Indiana","Michigan","Ohio", "Pennsylvania","New York",
+                                  "New Jersey", "Connecticut","Rhode Island","Massachusetts",
+                                  "Vermont", "New Hampshire","Maine"), fill = FALSE)
+points(n.sites$nhd_long, n.sites$nhd_lat, cex = .1, pch=20, col = "darkgoldenrod")
+title("All lakes with any NH4, NO3, TKN, TN data (n = 10622)")
+
+
+
 
 #map with data for all 4 indicators used to assess trophic state
 map(database = "state", regions=c("Minnesota", "Wisconsin", "Iowa", "Illinois","Missouri",
@@ -334,7 +372,9 @@ map(database = "state", regions=c("Minnesota", "Wisconsin", "Iowa", "Illinois","
 points(All4.sites$nhd_long, All4.sites$nhd_lat, cex = .1, pch=20, col = "blue")
 title("Lakes with data for all 4 trophic state indicators (n = 5096)")
 
-#######need to update this- non-mod and general check; somethings off
+#######need to update this- non-mod and general check; somethings off########
+##a first effort to map lakes with NO3 data relative to detection limit
+##this needs more thought before going prime time
 no3_NC1 <-SoLno2no3[which(SoLno2no3$no2no3_censorcode == "NC1"),]
 no3_NC2 <-SoLno2no3[which(SoLno2no3$no2no3_censorcode == "NC2"),]
 no3_NC3 <-SoLno2no3[which(SoLno2no3$no2no3_censorcode == "NC3"),]
@@ -350,7 +390,6 @@ above1<- no3_above[duplicated(no3_above[1]),]
 above2 <-above1[, 33:34]
 below<- no3_below[duplicated(no3_below[1]),]
 below2 <- below[, 33:34]
-
 map(database = "state", regions=c("Minnesota", "Wisconsin", "Iowa", "Illinois","Missouri",
                                   "Indiana","Michigan","Ohio", "Pennsylvania","New York",
                                   "New Jersey", "Connecticut","Rhode Island","Massachusetts",
@@ -360,6 +399,7 @@ par(new=TRUE)
 points(below2$nhd_long, below2$nhd_lat, cex = 0.1, pch=20, col = "cyan")
 title("Nitrate above DL or NA (gray; n= 47909) and below DL (cyan; n=19643)")
 
+##########
 
 # Number of lakes sampled/year by variable
 chl.nlakes.yr <- count(lake.average.chla, year)
@@ -398,79 +438,79 @@ YR1 <-left_join(YR1, nh4.nlakes.yr, by = "year")
 YR1 <-left_join(YR1, no2no3.nlakes.yr, by = "year")
 YR1 <-left_join(YR1, secchi.nlakes.yr, by = "year")
 YR1 <-left_join(YR1, tp.nlakes.yr, by = "year")
-YR1 <-left_join(YR1, tnmeasured.nlakes.yr, by = "year")
-#missing data issue??
+YR1 <-left_join(YR1, tn.nlakes.yr, by = "year")
+#missing data issue- replace NAs with zero
 YR1 <- data.frame(replace(YR1, is.na(YR1), 0))
-YR1$total <- YR1$chl+YR1$color+YR1$tkn+YR1$doc+YR1$nh4+YR1$no2no3+YR1$secchi+YR1$tn+YR1$tp+YR1$tnmeasured
-plot(YR1$year, YR1$total)
+YR1$total <- YR1$chl+YR1$color+YR1$tkn+YR1$doc+YR1$nh4+YR1$no2no3+YR1$secchi+YR1$tn+YR1$tp+YR1$tn
+#plot(YR1$year, YR1$total)
 
 #write.csv(YR1, file = ("Lake_by_year.csv"), row.names = F)
 #YR1 <- read.csv("Lake_by_year.csv")
 
 N_lakes <- summarise_all(YR1, funs(sum))
-N_lakes <- N_lakes[2:10]
+N_lakes <- N_lakes[, c("chl", "color", "doc", "nh4", "no2no3", "secchi", "tp", "tn")]
 N <- as.numeric(N_lakes[1,])
 var <- names(N_lakes) 
-var <-var[2:10]
 L.by.var <- data.frame(N, var)
 L2 <- L.by.var[order(-N),]
-barplot(L2$N, col = "blue", ylab = "sum of lakes/yr")
+barplot(L2$N, col = "blue", ylab = "Sum of lakes/yr")
 xtick<-c("Secchi", "TP", "Chla", "NO3", "NH4", "TKN", "Color", "DOC", "TN")
 axis(side=1, at=seq(1, 9, by=1), labels = xtick, las = 2)
 
+N.totals = c(chl.N, color.N, doc.N, nh4.N, no2no3.N, secchi.N, tn.N, tp.N)
+N.totals = sort(N.totals, decreasing = TRUE)
+
+barplot(N.totals, ylab = "Total data count", ylim = c(0, 750000),col = "darkseagreen")
+xtick<-c("Secchi", "Chl", "TP", "NO3", "TN","NH4", "Color", "DOC")
+axis(side=1, at=seq(1, 8, by=1), labels = xtick, las = 2)
+
 
 #plot of lakes visited/year by variable over time
-plot(YR1$year, YR1$secchi, xlim = c(1950, 2010), ylim = c(0, 4500), xlab = "", 
-     ylab = "", type = "o", pch = 16, col = "red")
+plot(YR1$year, YR1$secchi, xlim = c(1950, 2010), ylim = c(0, 4500), xlab = "Year", 
+     ylab= "Number of lakes", type = "o", pch = 16, col = "red")
 par(new=T)
-plot(YR1$year, YR1$chl, xlim = c(1950, 2010), ylim = c(0,4500), xlab = "Year",
-     ylab= "Number of lakes", type = "o", pch = 16, col= "green")
+plot(YR1$year, YR1$chl, xlim = c(1950, 2010), ylim = c(0,4500), xaxt='n', xlab = "",
+     yaxt='n', ylab = "", type = "o", pch = 16, col= "green")
 par(new=TRUE)
-plot(YR1$year, YR1$tp, xlim = c(1950, 2010), ylim = c(0, 4500), xlab= "", 
-     ylab = "", type = "o", pch = 16, col= "blue")
+plot(YR1$year, YR1$tp, xlim = c(1950, 2010), ylim = c(0, 4500), xaxt='n', xlab= "", 
+     yaxt='n', ylab = "", type = "o", pch = 16, col= "blue")
 par(new=T)
-plot(YR1$year, YR1$tnmeasured, xlim = c(1950, 2010), ylim = c(0, 4500), xlab= "", 
-     ylab = "", type = "o", pch = 16, col = "salmon")
+plot(YR1$year, YR1$tn, xlim = c(1950, 2010), ylim = c(0, 4500), xaxt='n', xlab= "", 
+     yaxt='n', ylab = "", type = "o", pch = 16, col = "burlywood")
 par(new=T)
-plot(YR1$year, YR1$tkn, xlim = c(1950, 2010), ylim = c(0, 4500), xlab = "", 
-     ylab = "", type = "o", pch = 16, col = "burlywood")
+plot(YR1$year, YR1$no2no3,  xlim = c(1950, 2010), ylim = c(0, 4500), xaxt='n', xaxt='n', xlab = "", 
+     yaxt='n', ylab = "", type = "o", pch = 16, col= "cyan")
 par(new=T)
-plot(YR1$year, YR1$no2no3,  xlim = c(1950, 2010), ylim = c(0, 4500), xlab = "", 
-     ylab = "", type = "o", pch = 16, col= "cyan")
+plot(YR1$year, YR1$nh4,  xlim = c(1950, 2010), ylim = c(0, 4500), xaxt='n', xlab = "", 
+     yaxt='n', ylab = "", type = "o", pch = 16, col= "gray")
 par(new=T)
-plot(YR1$year, YR1$nh4,  xlim = c(1950, 2010), ylim = c(0, 4500), xlab = "", 
-     ylab = "", type = "o", pch = 16, col= "gray")
-par(new=T)
-plot(YR1$year, YR1$doc, xlim = c(1950, 2010), ylim = c(0, 4500), xlab = "", 
-     ylab = "", type = "o", pch = 16, col = "brown")
-legend("topleft", legend = c("secchi", "chla", "tp", "tn", "tkn", "no2no3", "nh4", "doc"), cex = 0.8,
-       lty = c(1,1), col = c("red", "green", "blue", "salmon", "burlywood", "cyan", "gray", "brown"))
+plot(YR1$year, YR1$doc, xlim = c(1950, 2010), ylim = c(0, 4500), xaxt='n', xlab = "", 
+     yaxt='n', ylab = "", type = "o", pch = 16, col = "brown")
+legend("topleft", legend = c("secchi", "chla", "tp", "tn", "no2no3", "nh4", "doc"), cex = 0.8,
+       lty = c(1,1), col = c("red", "green", "blue", "burlywood", "cyan", "gray", "brown"))
 
 
-plot(YR1$year, YR1$secchi, xlim = c(1950, 2010), ylim = c(0, 4500), xlab = "", 
-     ylab = "", type = "l", col = "red")
+plot(YR1$year, YR1$secchi, xlim = c(1950, 2010), ylim = c(0, 4500), xlab = "Year", 
+     ylab = "Number of lakes", type = "l", col = "red")
 par(new=T)
-plot(YR1$year, YR1$chl, xlim = c(1950, 2010), ylim = c(0,4500), xlab = "Year",
-     ylab= "Number of lakes", type = "l", col= "green")
+plot(YR1$year, YR1$chl, xlim = c(1950, 2010), ylim = c(0,4500), xaxt='n', xlab = "",
+     yaxt='n', ylab= "", type = "l", col= "green")
 par(new=TRUE)
-plot(YR1$year, YR1$tp, xlim = c(1950, 2010), ylim = c(0, 4500), xlab= "", 
-     ylab = "", type = "l", col= "blue")
+plot(YR1$year, YR1$tp, xlim = c(1950, 2010), ylim = c(0, 4500), xaxt='n', xlab= "", 
+     yaxt='n', ylab = "", type = "l", col= "blue")
 par(new=T)
-plot(YR1$year, YR1$tnmeasured, xlim = c(1950, 2010), ylim = c(0, 4500), xlab= "", 
-     ylab = "", type = "l", col = "salmon")
+plot(YR1$year, YR1$tn, xlim = c(1950, 2010), ylim = c(0, 4500), xaxt='n', xlab= "", 
+     yaxt='n', ylab = "", type = "l", col = "burlywood")
 par(new=T)
-plot(YR1$year, YR1$tkn, xlim = c(1950, 2010), ylim = c(0, 4500), xlab = "", 
-     ylab = "", type = "l", col = "burlywood")
+plot(YR1$year, YR1$no2no3,  xlim = c(1950, 2010), ylim = c(0, 4500), xaxt='n', xlab = "", 
+     yaxt='n', ylab = "", type = "l", col= "cyan")
 par(new=T)
-plot(YR1$year, YR1$no2no3,  xlim = c(1950, 2010), ylim = c(0, 4500), xlab = "", 
-     ylab = "", type = "l", col= "cyan")
+plot(YR1$year, YR1$nh4,  xlim = c(1950, 2010), ylim = c(0, 4500), xaxt='n',xlab = "", 
+     yaxt='n', ylab = "", type = "l", col= "gray")
 par(new=T)
-plot(YR1$year, YR1$nh4,  xlim = c(1950, 2010), ylim = c(0, 4500), xlab = "", 
-     ylab = "", type = "l", col= "gray")
-par(new=T)
-plot(YR1$year, YR1$doc, xlim = c(1950, 2010), ylim = c(0, 4500), xlab = "", 
-     ylab = "", type = "l", col = "brown")
-legend("topleft", legend = c("secchi", "chla", "tp", "tn", "tkn", "no2no3", "nh4", "doc"), cex = 0.8,
+plot(YR1$year, YR1$doc, xlim = c(1950, 2010), ylim = c(0, 4500), xaxt='n', xlab = "", 
+     yaxt='n', ylab = "", type = "l", col = "brown")
+legend("topleft", legend = c("Secchi", "Chl", "TP", "TN", "NO3", "NH4", "DOC"), cex = 0.8,
        lty = c(1,1), col = c("red", "green", "blue", "salmon", "burlywood", "cyan", "gray", "brown"))
 
 
