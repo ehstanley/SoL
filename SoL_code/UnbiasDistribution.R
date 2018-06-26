@@ -31,10 +31,18 @@ hist(log(lc4.data$lake_area_ha))
 
 Biased<-round(log(l.c.data$lake_area_ha), digits=0)
 Unbiased<-round(log(l.data$lake_area_ha), digits=0)
-dens.bias <- density(Biased, adjust=0.8, from=min(Unbiased), to=max(Unbiased))
-dens.unbias <- density(Unbiased, adjust=0.8, from=min(Unbiased), to=max(Unbiased))
+dens.bias <- density(Biased, adjust=0.8, n=16, from=min(Unbiased), to=max(Unbiased))
+dens.unbias <- density(Unbiased, adjust=0.8, n=16, from=min(Unbiased), to=max(Unbiased))
 #predict_density <-approxfun(dens.unbias)
 #probvec<-dens.obs$y
 newsample <- sample(dens.bias$x, 1000, replace=TRUE, prob=dens.unbias$y)
 
+
+#this works but doesn't work b/c lagoslakeid needs to be affiliated with sample, so we need to pick a number of 
+#bins and make a prob distribution so we can sample.  Use density with 2^n of a reasonable # (e.g. 16?)
+#then convert whatever the hell dens$y is (doens't sum to 1) to a prob dist by dividing each by the sum of the vector
+
+dens.unbias <- density(Unbiased, adjust=0.8, n=16, from=min(Unbiased), to=max(Unbiased))
+probs<-dens.unbias$y/sum(dens.unbias$y)
+bins<-dens.unbias$x
                      
