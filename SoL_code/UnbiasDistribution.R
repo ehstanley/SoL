@@ -45,4 +45,7 @@ newsample <- sample(dens.bias$x, 1000, replace=TRUE, prob=dens.unbias$y)
 dens.unbias <- density(Unbiased, adjust=0.8, n=16, from=min(Unbiased), to=max(Unbiased))
 probs<-dens.unbias$y/sum(dens.unbias$y)
 bins<-dens.unbias$x
+
+#stratified function can do this with our df of log lake area - probs is size - need to get this from bins still, group is bins, df is log lake area
+#not sure what this returns?
                      
