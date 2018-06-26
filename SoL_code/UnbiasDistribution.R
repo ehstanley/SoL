@@ -29,12 +29,12 @@ hist(log(lc4.data$lake_area_ha))
 # SampleMod3 <- sample(Model, length(Obs), replace=FALSE, prob=predict_density(Model))
 
 
-Biased<-round(log(l.c.data$lake_area_ha, digits=0))
-Unbiased<-round(log(l.data$lake_area_ha, digits=0))
-dens.bias <- density(Biased)
-dens.unbias <- density(Unbiased)
-predict_density <-approxfun(dens.unbias)
+Biased<-round(log(l.c.data$lake_area_ha), digits=0)
+Unbiased<-round(log(l.data$lake_area_ha), digits=0)
+dens.bias <- density(Biased, adjust=0.8, from=min(Unbiased), to=max(Unbiased))
+dens.unbias <- density(Unbiased, adjust=0.8, from=min(Unbiased), to=max(Unbiased))
+#predict_density <-approxfun(dens.unbias)
 #probvec<-dens.obs$y
-newsample <- sample(Biased, 400, replace=FALSE, prob=predict_density(Unbiased))
-hist(log(SampleMod3))
+newsample <- sample(dens.bias$x, 1000, replace=TRUE, prob=dens.unbias$y)
+
                      
