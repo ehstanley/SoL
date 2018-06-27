@@ -42,19 +42,20 @@ summer.dat <- c.data %>% filter(day>=166 & day<=258) %>%
   left_join(dat_locus)
 
 #get variable specific dataframe (select which variable in var.dat)
-var.dat <- summer.dat %>% select(lagoslakeid,tp_med,group) %>% na.omit()
+var.dat <- summer.dat %>% select(lagoslakeid,colort_med,group) %>% na.omit()
 names(var.dat)[2] <- "value"
 
 #get sample frequency for observation dataset
 obs <- table(var.dat$group)/sum(table(var.dat$group))
-
+table(var.dat$group)
 #plot biases
 dat.overview = data.frame(cluster=1:16,full=as.vector(full),obs=as.vector(obs))
 dat.overview <- dat.overview %>% gather(key = "key",value = "value",-cluster)
 p1 <- ggplot(dat.overview, aes(fill=key, y=value, x=cluster)) +
   geom_bar(position="dodge", stat="identity") +labs(y="percent", 
-x="size bin", title="TP Sampling Distribution") + 
+x="size bin", title="ColorT Sampling Distribution") + 
   theme(plot.title = element_text(hjust = 0.5))
+p1
 
 #stratified sub-sample
 num.samples = 1000  #how many total samples to get
@@ -68,20 +69,22 @@ dat = data.frame(value=c(sample(var.dat$value,size = 1000,replace = FALSE),var.u
                  group=rep(c("Observed","Unbiased"), 
                            c(1000,
                              length (var.unbiased$value))))
-p2 <- ggplot(dat, aes(value, fill=group, colour=group)) +
+p2 <- ggplot(dat, aes(value+.1, fill=group, colour=group)) +
   stat_ecdf(geom="step") +
   theme_bw() + 
   labs(y="ECDF", 
-                  x="TP (ug/L)", 
+                  x="colort", 
        title="Comparison of Unbiased Distribution") + 
-  theme(plot.title = element_text(hjust = 0.5))
+  theme(plot.title = element_text(hjust = 0.5)) + scale_x_log10()
+p2
 
-p3 <- ggplot(dat, aes(x=group, y=value, color=group)) + 
+p3 <- ggplot(dat, aes(x=group, y=value+.1, color=group)) + 
   geom_violin() + theme_bw() + 
-  geom_boxplot(width=0.1)
+  geom_boxplot(width=0.1) + scale_y_log10()
+p3
 
 plots <- plot_grid(p1,p2,p3,align="h",nrow = 3,ncol = 1)
-save_plot("SoL_graphics/tp_stratified.png",
+save_plot("SoL_graphics/colort_stratified.png",
           plots,base_aspect_ratio = 1.3,nrow=3,ncol=1,
           base_width = 6)
 
