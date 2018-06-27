@@ -58,9 +58,9 @@ secchi.unbiased = stratified(indt = secchi, #random stratification
                           group = "group",
                           size = pop.samples,
                           replace = TRUE)
-dat = data.frame(value=c(secchi$secchi_med,secchi.unbiased$secchi_med), 
+dat = data.frame(value=c(sample(secchi$secchi_med,size = 1000,replace = FALSE),secchi.unbiased$secchi_med), 
                  group=rep(c("Observed","Unbiased"), 
-                           c(length(secchi$secchi_med),
+                           c(1000,
                              length (secchi.unbiased$secchi_med))))
 p2 <- ggplot(dat, aes(value, fill=group, colour=group)) +
   stat_ecdf(geom="step") +
