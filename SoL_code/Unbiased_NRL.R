@@ -78,3 +78,15 @@ plots <- plot_grid(p1,p2,p3,align="h",nrow = 3,ncol = 1)
 save_plot("SoL_graphics/secchi_stratified.png",
           plots,base_aspect_ratio = 1.3,nrow=3,ncol=1,
           base_width = 6)
+
+#check the effect of resampling on median estimate
+sample.median = rep(x = NA,100)
+for(i in 1:1000){
+  secchi.unbiased = stratified(indt = secchi, #random stratification
+                               group = "group",
+                               size = pop.samples,
+                               replace = TRUE)
+  sample.median[i] <- median(secchi.unbiased$secchi_med)
+}
+boxplot(sample.median)
+range(sample.median)
