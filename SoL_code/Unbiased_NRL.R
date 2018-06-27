@@ -18,6 +18,7 @@ hist(dat_locus$log_area,breaks = 16)
 (full <- table(dat_locus$group)/sum(table(dat_locus$group)))
 #observed dataset (what we sampled)
 c.data<-readRDS(file="SoL_data/SoL_data.rds")
+#Get summer medians
 summer.dat <- c.data %>% filter(day>=166 & day<=258) %>% 
   select(lagoslakeid,
          year,
@@ -40,33 +41,38 @@ summer.dat <- c.data %>% filter(day>=166 & day<=258) %>%
   summarise_all(funs(median(., na.rm = TRUE))) %>% 
   left_join(dat_locus)
 
-secchi <- summer.dat %>% select(lagoslakeid,secchi_med,group) %>% na.omit()
-obs <- table(secchi$group)/sum(table(secchi$group))
+#get variable specific dataframe (select which variable in var.dat)
+var.dat <- summer.dat %>% select(lagoslakeid,tp_med,group) %>% na.omit()
+names(var.dat)[2] <- "value"
+
+#get sample frequency for observation dataset
+obs <- table(var.dat$group)/sum(table(var.dat$group))
+
 #plot biases
 dat.overview = data.frame(cluster=1:16,full=as.vector(full),obs=as.vector(obs))
 dat.overview <- dat.overview %>% gather(key = "key",value = "value",-cluster)
 p1 <- ggplot(dat.overview, aes(fill=key, y=value, x=cluster)) +
   geom_bar(position="dodge", stat="identity") +labs(y="percent", 
-x="size bin", title="Secchi Sampling Distribution") + 
+x="size bin", title="TP Sampling Distribution") + 
   theme(plot.title = element_text(hjust = 0.5))
 
 #stratified sub-sample
 num.samples = 1000  #how many total samples to get
 pop.samples = round(as.vector(full)*num.samples,digits=0) #how many to sample from each cluster
 names(pop.samples) = as.character(c(1:16)) #name vector
-secchi.unbiased = stratified(indt = secchi, #random stratification
+var.unbiased = stratified(indt = var.dat, #random stratification
                           group = "group",
                           size = pop.samples,
                           replace = TRUE)
-dat = data.frame(value=c(sample(secchi$secchi_med,size = 1000,replace = FALSE),secchi.unbiased$secchi_med), 
+dat = data.frame(value=c(sample(var.dat$value,size = 1000,replace = FALSE),var.unbiased$value), 
                  group=rep(c("Observed","Unbiased"), 
                            c(1000,
-                             length (secchi.unbiased$secchi_med))))
+                             length (var.unbiased$value))))
 p2 <- ggplot(dat, aes(value, fill=group, colour=group)) +
   stat_ecdf(geom="step") +
   theme_bw() + 
   labs(y="ECDF", 
-                  x="Secchi (m)", 
+                  x="TP (ug/L)", 
        title="Comparison of Unbiased Distribution") + 
   theme(plot.title = element_text(hjust = 0.5))
 
@@ -75,7 +81,7 @@ p3 <- ggplot(dat, aes(x=group, y=value, color=group)) +
   geom_boxplot(width=0.1)
 
 plots <- plot_grid(p1,p2,p3,align="h",nrow = 3,ncol = 1)
-save_plot("SoL_graphics/secchi_stratified.png",
+save_plot("SoL_graphics/tp_stratified.png",
           plots,base_aspect_ratio = 1.3,nrow=3,ncol=1,
           base_width = 6)
 
