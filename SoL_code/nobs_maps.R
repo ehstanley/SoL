@@ -48,3 +48,31 @@ points(overtwenty$nhd_long, overtwenty$nhd_lat, pch=21, col="black", lwd=.5, bg=
 
 
 dev.off()
+
+
+library(dplyr)
+
+data<-readRDS(file="SoL_data/SoL_data.rds")
+
+data.allvars <- data[, c("lagoslakeid", "chla", "colort", "doc", "no2no3", "nh4", "tn_combined", "tp", "secchi", "year")]
+
+
+#make median response by lake, first median for each year, then median of those
+
+nobs.var<- function(var) {na.omit(data[,c("lagoslakeid", var, "year")] %>% group_by(lagoslakeid))}
+
+chla<-nobs.var("chla")
+
+chlanobs<- chla %>% filter(chla, count==1)
+
+
+
+lakeyrmed<- data.allvars %>% group_by(lagoslakeid, year) %>% summarise(tp.med=median(tp, na.rm=T), 
+                                                                       chla.med=median(chla, na.rm=T), 
+                                                                       colort.med=median(colort, na.rm=T),
+                                                                       doc.med=median(doc, na.rm=T), 
+                                                                       no3.med=median(no2no3, na.rm=T), 
+                                                                       nh4.med=median(nh4, na.rm=T), 
+                                                                       tn.med=median(tn_combined, na.rm=T), 
+                                                                       sec.med=median(secchi, na.rm=T))
+lakemed<- na.omit(lakeyrmed %>% group_by(lagoslakeid) %>% summarise(l.med=median(ly.med, na.rm=T), count=n()))
