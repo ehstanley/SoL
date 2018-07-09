@@ -50,5 +50,12 @@ mapnobs("tn_combined", 'tn_combined', "SoL_graphics/nobsmaps/TN_nobs_map.pdf")
 mapnobs("chla", 'chla', "SoL_graphics/nobsmaps/chla_nobs_map.pdf")
 mapnobs("no2no3", 'no2no3', "SOL_graphics/nobsmaps/no3_nobs_map.pdf")
 
-#filename something like this "SoL_graphics/TP_nobs_map.pdf"
+#add legend for colors to add to any maps
+png("SoL_graphics/nobsmaps/legend.png", width=1.7, height=1, res=300, units="in")
+par(mar=c(0,0,0,0), xpd=NA)
+plot(1, type="n", axes=F, xlab="", ylab="")
+legend(.7,1.4, legend=c("1 year", "2-10 years", "11-20 years", "20+ years"),
+       fill=c(rgb(255,255,204, 200,max=255), rgb(161,218,180, 200,max=255), rgb(65,182,196, 200,max=255),
+             rgb(34,94,168, 200,max=255)), cex=1, box.lty=0)
+dev.off()
 
