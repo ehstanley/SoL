@@ -27,9 +27,9 @@ state_order <- filter(population, lake_area_ha >= 4, !(state_name %in% "OUT_OF_C
   arrange(-count) %>%
   pull(state_name)
 
-variable_summ <- function(input_dat, variable_quo) {
+variable_summ <- function(input_dat, variable) {
   
-  variable_quo <- sym(variable_quo)
+  variable_quo <- sym(variable)
   sample_stats <- filter(input_dat, !is.na(!!variable_quo), !(state_name %in% "OUT_OF_COUNTY_STATE")) %>%
     filter(lake_area_ha >= 4) %>%
     select(lagoslakeid, state_name, lake_area_ha, res_time_proxy) %>%
@@ -57,8 +57,27 @@ variable_summ <- function(input_dat, variable_quo) {
     mutate(prop_iso = iso/count) %>%
     select(state_name, prop_iso)
   
+  sampled_n <- filter(input_dat, !is.na(!!variable_quo), !(state_name %in% "OUT_OF_COUNTY_STATE")) %>%
+    filter(lake_area_ha >= 4) %>%
+    select(lagoslakeid, state_name) %>% 
+    distinct() %>%
+    group_by(state_name) %>%
+    summarise(count_sample = n())
+  
+  pop_n <- filter(population, !(state_name %in% "OUT_OF_COUNTY_STATE")) %>%
+    filter(lake_area_ha >= 4) %>%
+    select(lagoslakeid, state_name) %>% 
+    distinct() %>%
+    group_by(state_name) %>%
+    summarise(count_all = n())
+  
+  sampled_stats <- left_join(sampled_n, pop_n) %>%
+    mutate(prop_sampled = count_sample/count_all) %>%
+    select(state_name, prop_sampled)
+  
   all_stats <- left_join(sample_stats, count_stats, by = 'state_name') %>%
     left_join(iso_stats, by = 'state_name') %>%
+    left_join(sampled_stats, by = 'state_name') %>%
     arrange(match(state_name, state_order), state_name)
   
 
@@ -128,6 +147,26 @@ par(fig = c(0, 1, 0, 1), oma = c(0, 0, 0, 0), mar = c(0, 0, 0, 0), new = TRUE)
 plot(0, 0, type = "n", bty = "n", xaxt = "n", yaxt = "n")
 legend(-.9,1.05, legend = c("Population", "TN Sample", "TP Sample", "Chl Sample", "DOC Sample"), 
        pch = 16, pt.cex = 2, bty = "n", col = c("black", my.cols), cex =1, horiz = TRUE)
+dev.off()
+
+# just proportion of lakes sampled
+png("SoL_graphics/proportion_sampled_state_dotplot.png", height = 600, width = 400)
+#par(mfrow=c(1,4), cex = 1, oma = c(0,5,3,3))
+par(mar=c(5,7,1,1), oma = c(0, 5, 4, 0))
+
+# dotplot of proportion of lakes sampled
+dotchart2(tn_summ$prop_sampled, labels = pop_summ$state_name,  dotsize = 2, xlab = "Proportion of lakes sampled", 
+          xlim = c(0, 0.7), bty= "L", width.factor = .2, col = my.cols[1])
+dotchart2(tp_summ$prop_sampled,  dotsize = 2, add = TRUE, col = my.cols[2])
+dotchart2(chl_summ$prop_sampled,  dotsize = 2, add = TRUE, col = my.cols[3])
+dotchart2(doc_summ$prop_sampled,  dotsize = 2, add = TRUE, col = my.cols[4])
+
+
+# add legend
+par(fig = c(0, 1, 0, 1), oma = c(0, 0, 0, 0), mar = c(0, 0, 0, 0), new = TRUE)
+plot(0, 0, type = "n", bty = "n", xaxt = "n", yaxt = "n")
+legend(-0.6,1, legend = c("TN Sample", "TP Sample", "Chl Sample", "DOC Sample"), 
+       pch = 16, pt.cex = 2, bty = "n", col = my.cols, cex =1,ncol = 2)
 dev.off()
 
 
