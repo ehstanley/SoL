@@ -90,6 +90,77 @@ vio80<-lake.ss$med80obs
 vio120<-lake.ss$med120obs
 
 png("SoL_graphics/TimeResampleViolin.png", width=6, height=5, units='in', res=300)
+vioplot(vio2, vio5, vio10, vio20, vio40, vio80, vio120, names=c("2", "5", "10", "20", "40", "80", "120"), 
+        col="lightgrey")
+mtext("% Difference in Median Secchi", side=2, line=2)
+mtext("Sample Size", side=1, line=2)
+abline(h=0)
+dev.off()
+
+##what about doing this with yearly medians to identify how many years of 20 are needed to capture
+#year to year variation (not within year)?
+
+#use lakeyrmed data for lakes in lakekeeps
+
+sec20ymed <- lakeyrmed[lakeyrmed$lagoslakeid %in% lakekeeps, ]
+
+
+#set up a vector of different sample sizes that we want to use - # of years sampled from lakes that have at least 20 years of data
+n=c(2, 3, 4, 5, 7, 10, 15, 20)
+
+#data frame to store medians for each lake and sample size combo
+lake.ss.meds<- data.frame(med2obs=numeric(),
+                     med3obs=numeric(),
+                     med4obs=numeric(),
+                     med5obs=numeric(),
+                     med7obs=numeric(),
+                     med10obs=numeric(),
+                     med15obs=numeric(),
+                     med20obs=numeric())
+
+for (k in 1:length(lakekeeps)) {
+  
+  id<-lakekeeps[k]
+  dat.id<-lakeyrmed[lakeyrmed$lagoslakeid==id,]
+  med.t<-median(dat.id$ly.med)
+  
+  
+  #vector to store data to populate each row of lake.ss
+  lakemeds=numeric(8)
+  
+  for (j in 1:length(n)) {
+    
+    #dummy vector to store median from inner loop
+    sample.med=numeric(1000)
+    
+    for (i in 1:1000) {
+      
+      #sample n observations of 20 year secchi dataset and take the median and cv, repeat 1,000 times to fill the chla.median and chla.variance vectors
+      sample.x = sample(dat.id$ly.med, n[j], replace=F)
+      sample.med[i]=median(sample.x)
+    }
+    
+    lakemeds[j]= median((sample.med-med.t)/med.t*100)
+    
+  }
+  
+  lake.ss.meds[k,]=lakemeds
+  
+}
+
+vio2m<-lake.ss.meds$med2obs
+vio3m<-lake.ss.meds$med3obs
+vio4m<-lake.ss.meds$med4obs
+vio5m<-lake.ss.meds$med5obs
+vio7m<-lake.ss.meds$med7obs
+vio10m<-lake.ss.meds$med10obs
+vio15m<-lake.ss.meds$med15obs
+vio20m<-lake.ss.meds$med20obs
+
+vioplot(vio2m, vio3m, vio4m, vio5m, vio7m, vio10m, vio15m, vio20m, names=c("2", "3", "4", "5", "7", "10", "15", "20"), 
+        col="lightgrey")
+
+png("SoL_graphics/TimeResampleViolin.png", width=6, height=5, units='in', res=300)
 vioplot(vio2, vio10, vio20, vio40, vio80, vio120, names=c("2", "10", "20", "40", "80", "120"), 
         col="lightgrey")
 mtext("% Difference in Median Secchi", side=2, line=2)
@@ -97,6 +168,6 @@ mtext("Sample Size", side=1, line=2)
 abline(h=0)
 dev.off()
 
-mat.ss<-as.matrix(lake.ss)
-boxplot.matrix(mat.ss)
+
+sec20_agg=aggregate(sec20ymed,by=list(lakeID=sec20ymed$lagoslakeid),FUN=median)
 
