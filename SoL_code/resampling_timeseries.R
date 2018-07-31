@@ -20,31 +20,45 @@ lakekeeps<-unique(yrs20$lagoslakeid)
 
 sec20 <- sec.dat[sec.dat$lagoslakeid %in% lakekeeps, ]
 
+sec20obs<- sec20 %>% group_by(lagoslakeid) %>% summarise(count=n())
+hist(sec20obs$count)
+##def don't want over 500, get rid of those to get a better window on hist
+sec20under500<-filter(sec20obs, count<500)
+hist(sec20under500$count)
+
+##150-350 observations still includes a lot of lakes and is a nice relatively tight window.  try that for now.
+sec.20.bottom<-filter(sec20obs, count>149)
+sec.20.both<-filter(sec.20.bottom, count<351)
+
+#this gets us 625 lakes - still solid!
+newkeeps<-unique(sec.20.both$lagoslakeid)
+
+sec20unif <- sec.dat[sec.dat$lagoslakeid %in% newkeeps, ]
+
 
 #set up a vector of different sample sizes that we want to use - # of years sampled from lakes that have at least 20 years of data
-n=c(2, 5, 10, 15, 20, 40, 60, 100)
+n=c(2, 5, 10, 20, 40, 80, 120)
 
 #data frame to store medians for each lake and sample size combo
 lake.ss<- data.frame(med2obs=numeric(),
                      med5obs=numeric(),
                      med10obs=numeric(),
-                     med15obs=numeric(),
                      med20obs=numeric(),
                      med40obs=numeric(),
-                     med60obs=numeric(),
-                     med100obs=numeric())
+                     med80obs=numeric(),
+                     med120obs=numeric())
 
-for (k in 1:length(lakekeeps)) {
+for (k in 1:length(newkeeps)) {
   
-  id<-lakekeeps[k]
+  id<-newkeeps[k]
   dat.id<-sec.dat[sec.dat$lagoslakeid==id,]
   med.t<-median(dat.id$secchi)
   
   
   #vector to store data to populate each row of lake.ss
-  lakemeds=numeric(8)
+  lakemeds=numeric(7)
 
-for (j in n) {
+for (j in 1:length(n)) {
   
   #dummy vector to store median from inner loop
   sample.med=numeric(1000)
@@ -52,7 +66,7 @@ for (j in n) {
   for (i in 1:1000) {
     
     #sample n observations of 20 year secchi dataset and take the median and cv, repeat 1,000 times to fill the chla.median and chla.variance vectors
-    sample.x = sample(dat.id$secchi, j, replace=T)
+    sample.x = sample(dat.id$secchi, n[j], replace=F)
     sample.med[i]=median(sample.x)
   }
   
@@ -70,15 +84,18 @@ library(vioplot)
 vio2<-lake.ss$med2obs
 vio5<-lake.ss$med5obs
 vio10<-lake.ss$med10obs
-vio15<-lake.ss$med15obs
 vio20<-lake.ss$med20obs
 vio40<-lake.ss$med40obs
-vio60<-lake.ss$med60obs
-vio100<-lake.ss$med100obs
+vio80<-lake.ss$med80obs
+vio120<-lake.ss$med120obs
 
-vioplot(vio2, vio5, vio10, vio15, vio20, vio40, vio60, vio100, names=c("2", "5", "10", "15", "20", "40", "60", "100"), 
+png("SoL_graphics/TimeResampleViolin.png", width=6, height=5, units='in', res=300)
+vioplot(vio2, vio10, vio20, vio40, vio80, vio120, names=c("2", "10", "20", "40", "80", "120"), 
         col="lightgrey")
+mtext("% Difference in Median Secchi", side=2, line=2)
+mtext("Sample Size", side=1, line=2)
 abline(h=0)
+dev.off()
 
 mat.ss<-as.matrix(lake.ss)
 boxplot.matrix(mat.ss)
