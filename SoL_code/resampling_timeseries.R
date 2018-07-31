@@ -44,7 +44,7 @@ for (k in 1:length(lakekeeps)) {
   #vector to store data to populate each row of lake.ss
   lakemeds=numeric(8)
 
-for (j in 1:length(n)) {
+for (j in n) {
   
   #dummy vector to store median from inner loop
   sample.med=numeric(1000)
@@ -52,11 +52,11 @@ for (j in 1:length(n)) {
   for (i in 1:1000) {
     
     #sample n observations of 20 year secchi dataset and take the median and cv, repeat 1,000 times to fill the chla.median and chla.variance vectors
-    sample.x = sample(dat.id$secchi, n[j], replace=T)
+    sample.x = sample(dat.id$secchi, j, replace=T)
     sample.med[i]=median(sample.x)
   }
   
-  lakemeds[j]= (median(sample.med)-med.t)/med.t*100
+  lakemeds[j]= median((sample.med-med.t)/med.t*100)
   		
 }
   
