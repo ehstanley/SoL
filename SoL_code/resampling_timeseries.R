@@ -164,11 +164,13 @@ png("SoL_graphics/ViolinResample2Panel.png", width=6, height=10, units='in', res
 par(mfrow=c(2,1), mar=c(2,0,0,0), oma=c(2,4,1,1))
 vioplot(vio2, vio10, vio20, vio40, vio80, vio120, names=c("2", "10", "20", "40", "80", "120"), 
         col="lightgrey")
-mtext("Across and Within Year % Difference in Median Secchi", side=2, line=2)
+mtext("% Difference between sample median and true median", side=2, line=2)
+text(5.3, 43, "a) Within and across years")
 vioplot(vio2m, vio3m, vio4m, vio5m, vio7m, vio10m, vio15m, vio20m, names=c("2", "3", "4", "5", "7", "10", "15", "20"), 
         col="lightgrey")
-mtext("Across Year % Difference in Median Secchi", side=2, line=2)
+mtext("% Difference between sample median and true median", side=2, line=2)
 mtext("Sample Size", side=1, line=2)
+text(7.2, 64, "b) Across years only")
 dev.off()
 
 
