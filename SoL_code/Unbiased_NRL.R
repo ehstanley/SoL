@@ -65,12 +65,14 @@ p1
 #stratified sub-sample
 num.samples = 1000  #how many total samples to get
 pop.samples = round(as.vector(full)*num.samples,digits=0) #how many to sample from each cluster
+pop.samples[which(pop.samples==0)] <- 1
 names(pop.samples) = as.character(c(1:16)) #name vector
 var.unbiased = stratified(indt = var.dat, #random stratification
                           group = "group",
                           size = pop.samples,
                           replace = TRUE)
-dat = data.frame(value=c(sample(var.dat$value,size = 1000,replace = FALSE),var.unbiased$value), 
+dat = data.frame(value=c(sample(var.dat$value,size = num.samples,replace = FALSE),
+                         var.unbiased$value), 
                  group=rep(c("Observed","Unbiased"), 
                            c(1000,
                              length (var.unbiased$value))))
@@ -113,15 +115,15 @@ save_plot(paste("SoL_graphics/",parameter[i],"_stratified.png",sep=""),
 
 write_csv(x = summary.output,"SoL_data/unbiased_stats.csv")
 #check the effect of resampling on median estimate
-sample.median = rep(x = NA,100)
-
-
-for(i in 1:1000){
-  secchi.unbiased = stratified(indt = secchi, #random stratification
-                               group = "group",
-                               size = pop.samples,
-                               replace = TRUE)
-  sample.median[i] <- median(secchi.unbiased$secchi_med)
-}
-boxplot(sample.median)
-range(sample.median)
+# sample.median = rep(x = NA,100)
+# 
+# 
+# for(i in 1:1000){
+#   secchi.unbiased = stratified(indt = secchi, #random stratification
+#                                group = "group",
+#                                size = pop.samples,
+#                                replace = TRUE)
+#   sample.median[i] <- median(secchi.unbiased$secchi_med)
+# }
+# boxplot(sample.median)
+# range(sample.median)
