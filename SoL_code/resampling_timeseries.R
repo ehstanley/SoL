@@ -250,6 +250,7 @@ par(mfrow=c(11,5), mar=c(0,0,0,0), oma=c(0,0,0,0))
 for(i in 1:length(newkeeps)){
   dat.t = sec20unif[which(sec20unif$lagoslakeid==newkeeps[i]),]
   plot(dat.t$sampledate,dat.t$secchi,pch=16,xaxt="n",yaxt="n",xlab="",ylab="",type="b")
+  mtext(side=3,dat.t$lagoslakeid,col=rgb(211,211,211,max=255,alpha = 100),line=-1.5)
 }
 dev.off()
 
