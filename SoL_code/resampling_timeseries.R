@@ -101,10 +101,12 @@ sec20unif <- lakeyrkeeps %>% left_join(sec20_quarterly)
 newkeeps <- unique(sec20unif$lagoslakeid)
 
 #set up a vector of different sample sizes that we want to use - # of years sampled from lakes that have at least 20 years of data
-n=c(2, 5, 10, 20, 30, 60)
+n=c(1,2,3,5,10,20,30,60)
 
 #data frame to store medians for each lake and sample size combo
-lake.ss<- data.frame(med2obs=numeric(),
+lake.ss<- data.frame(med1obs=numeric(),
+                     med2obs=numeric(),
+                     med3obs=numeric(),
                      med5obs=numeric(),
                      med10obs=numeric(),
                      med20obs=numeric(),
@@ -119,7 +121,7 @@ for (k in 1:length(newkeeps)) {
   
   
   #vector to store data to populate each row of lake.ss
-  lakemeds=numeric(6)
+  lakemeds=numeric(8)
 
 for (j in 1:length(n)) {
   
@@ -144,7 +146,9 @@ for (j in 1:length(n)) {
 
 library(vioplot)
 
+vio1<-lake.ss$med1obs
 vio2<-lake.ss$med2obs
+vio3<-lake.ss$med3obs
 vio5<-lake.ss$med5obs
 vio10<-lake.ss$med10obs
 vio20<-lake.ss$med20obs
@@ -153,7 +157,8 @@ vio60<-lake.ss$med60obs
 
 
 png("SoL_graphics/TimeResampleViolin.png", width=6, height=5, units='in', res=300)
-vioplot(vio2, vio5, vio10, vio20, vio30, vio60, names=c("2", "5", "10", "20", "30", "60"), 
+vioplot(vio1,vio2,vio3, vio5, vio10, vio20, vio30, vio60, 
+        names=c("1","2","3","5", "10", "20", "30", "60"), 
         col="lightgrey")
 mtext("% Difference in Median Secchi", side=2, line=2)
 mtext("Sample Size", side=1, line=2)
@@ -170,12 +175,12 @@ sec20ymed <- sec20unif %>%  group_by(lagoslakeid,year) %>%
 
 
 #set up a vector of different sample sizes that we want to use - # of years sampled from lakes that have at least 20 years of data
-n=c(2, 3, 4, 5, 7, 10, 15, 20)
+n=c(1,2,3,5,7,10,15,20)
 
 #data frame to store medians for each lake and sample size combo
-lake.ss.meds<- data.frame(med2obs=numeric(),
+lake.ss.meds<- data.frame(med1obs=numeric(),
+                     med2obs=numeric(),
                      med3obs=numeric(),
-                     med4obs=numeric(),
                      med5obs=numeric(),
                      med7obs=numeric(),
                      med10obs=numeric(),
@@ -212,29 +217,40 @@ for (k in 1:length(newkeeps)) {
   
 }
 
+vio1m<-lake.ss.meds$med1obs
 vio2m<-lake.ss.meds$med2obs
 vio3m<-lake.ss.meds$med3obs
-vio4m<-lake.ss.meds$med4obs
 vio5m<-lake.ss.meds$med5obs
 vio7m<-lake.ss.meds$med7obs
 vio10m<-lake.ss.meds$med10obs
 vio15m<-lake.ss.meds$med15obs
 vio20m<-lake.ss.meds$med20obs
 
-vioplot(vio2m, vio3m, vio4m, vio5m, vio7m, vio10m, vio15m, vio20m, names=c("2", "3", "4", "5", "7", "10", "15", "20"), 
+vioplot(vio1m,vio2m, vio3m, vio5m, vio7m, vio10m, vio15m, vio20m, 
+        names=c("1","2", "3", "5", "7", "10", "15", "20"), 
         col="lightgrey")
 
 png("SoL_graphics/ViolinResample2Panel.png", width=6, height=10, units='in', res=300)
 par(mfrow=c(2,1), mar=c(2,0,0,0), oma=c(2,4,1,1))
-vioplot(vio2, vio10, vio20, vio30, vio60, names=c("2", "10", "20", "30", "60"), 
+vioplot(vio1,vio2,vio3, vio5, vio10, vio20, vio30, vio60, 
+        names=c("1","2","3","5", "10", "20", "30", "60"), 
         col="lightgrey")
-mtext("% Difference between sample median and true median", side=2, line=2)
+mtext("Percent Error", side=2, line=2)
 text(5.3, 43, "a) Within and across years")
-vioplot(vio2m, vio3m, vio4m, vio5m, vio7m, vio10m, vio15m, vio20m, names=c("2", "3", "4", "5", "7", "10", "15", "20"), 
+vioplot(vio1m,vio2m, vio3m, vio5m, vio7m, vio10m, vio15m, vio20m, 
+        names=c("1","2", "3", "5", "7", "10", "15", "20"), 
         col="lightgrey")
-mtext("% Difference between sample median and true median", side=2, line=2)
+mtext("Percent Error", side=2, line=2)
 mtext("Sample Size", side=1, line=2)
 text(7.2, 64, "b) Across years only")
+dev.off()
+
+png("SoL_graphics/lt_secchi_data%03d.png", width=8, height=10.5, units='in', res=300)
+par(mfrow=c(11,5), mar=c(0,0,0,0), oma=c(0,0,0,0))
+for(i in 1:length(newkeeps)){
+  dat.t = sec20unif[which(sec20unif$lagoslakeid==newkeeps[i]),]
+  plot(dat.t$sampledate,dat.t$secchi,pch=16,xaxt="n",yaxt="n",xlab="",ylab="",type="b")
+}
 dev.off()
 
 
