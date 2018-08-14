@@ -100,6 +100,14 @@ lakeyrkeeps <- lakeqrcount[lakeqrcount$lagoslakeid %in% lakemed$lagoslakeid,] %>
 sec20unif <- lakeyrkeeps %>% left_join(sec20_quarterly)
 newkeeps <- unique(sec20unif$lagoslakeid)
 
+#datacheckes
+obsperyear <- sec20unif %>%  group_by(lagoslakeid,year) %>% 
+  summarise(ly.med=median(secchi, na.rm=T),count=n())
+unique(obsperyear$count) # yep...everylake as at least 3 observations
+numyears <- obsperyear %>% group_by(lagoslakeid) %>% 
+  summarise(l.med=median(ly.med,na.rm=T),count=n())
+range(numyears$count) # yep mininum number of years with 3+ quarterly observations is 20
+
 #set up a vector of different sample sizes that we want to use - # of years sampled from lakes that have at least 20 years of data
 n=c(1,2,3,5,10,20,30,60)
 
