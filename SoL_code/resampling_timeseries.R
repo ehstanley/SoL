@@ -1,6 +1,5 @@
 ##want to do a basic resampling exercise with lakes that have at least 20 years of data -- how many years of data are required for mean and variance to approach "true" values from actual 20 yr time series.  actual values for mean and variance are specific by lagoslakeid, so calculate the absolute value of the % difference betweena "true" average and average based on small/resampled data.
 
-library(dplyr)
 library(lubridate)
 library(tidyverse)
 library(vioplot)
