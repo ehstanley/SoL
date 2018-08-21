@@ -3,6 +3,7 @@
 library(lubridate)
 library(tidyverse)
 library(vioplot)
+library(brotools)
 
 data = readRDS("SoL_data/SoL_data.rds")
 
@@ -155,9 +156,6 @@ for (j in 1:length(n)) {
   lake.ss[k,]=lakemeds
   
 }
-  
-
-library(vioplot)
 
 vio1<-lake.ss$med1obs
 vio2<-lake.ss$med2obs
@@ -169,8 +167,8 @@ vio30<-lake.ss$med30obs
 vio40<-lake.ss$med40obs
 
 
-png(paste("SoL_graphics/",parameter.choice,"_TimeResampleViolin.png", width=6, height=5, units='in', res=300)
-vioplot(vio1,vio2,vio3, vio5, vio10, vio20, vio30, vio60, 
+png(paste("SoL_graphics/",parameter.choice,"_TimeResampleViolin.png",sep=""), width=6, height=5, units='in', res=300)
+vioplot(vio1,vio2,vio3, vio5, vio10, vio20, vio30, vio40, 
         names=c("1","2","3","5", "10", "20", "30", "40"), 
         col="lightgrey")
 mtext("Percent Error", side=2, line=2)
@@ -178,6 +176,8 @@ mtext("Sample Size", side=1, line=2)
 abline(h=0)
 dev.off()
 
+summary_table <- brotools::describe(lake.ss)
+write_csv(x = summary_table,path = paste("SoL_data/",parameter.choice,"_TimeResamplestats.csv",sep=""))
 ##what about doing this with yearly medians to identify how many years of 20 are needed to capture
 #year to year variation (not within year)?
 
