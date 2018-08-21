@@ -1,3 +1,4 @@
+rm(list=ls())
 ##want to do a basic resampling exercise with lakes that have at least 20 years of data -- how many years of data are required for mean and variance to approach "true" values from actual 20 yr time series.  actual values for mean and variance are specific by lagoslakeid, so calculate the absolute value of the % difference betweena "true" average and average based on small/resampled data.
 
 library(lubridate)
@@ -9,7 +10,7 @@ data = readRDS("SoL_data/SoL_data.rds")
 
 
 #Choose which parameter to run
-parameter.choice = "secchi"
+parameter.choice = "doc"
 
 variable.dat = na.omit(data[,c("lagoslakeid", "year", parameter.choice,"sampledate")])
 names(variable.dat)[3] = "value"
@@ -156,6 +157,7 @@ for (j in 1:length(n)) {
   lake.ss[k,]=lakemeds
   
 }
+lake.ss <- lake.ss %>% drop_na()
 
 vio1<-lake.ss$med1obs
 vio2<-lake.ss$med2obs
@@ -176,7 +178,7 @@ mtext("Sample Size", side=1, line=2)
 abline(h=0)
 dev.off()
 
-summary_table <- brotools::describe(lake.ss)
+(summary_table <- brotools::describe(lake.ss))
 write_csv(x = summary_table,path = paste("SoL_data/",parameter.choice,"_TimeResamplestats.csv",sep=""))
 ##what about doing this with yearly medians to identify how many years of 20 are needed to capture
 #year to year variation (not within year)?
