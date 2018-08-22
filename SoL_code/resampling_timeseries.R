@@ -10,7 +10,7 @@ data = readRDS("SoL_data/SoL_data.rds")
 
 
 #Choose which parameter to run
-parameter.choice = "doc"
+parameter.choice = "tp"
 
 variable.dat = na.omit(data[,c("lagoslakeid", "year", parameter.choice,"sampledate")])
 names(variable.dat)[3] = "value"
