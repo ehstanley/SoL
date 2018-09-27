@@ -672,7 +672,7 @@ p <- ggplot(jday_long, aes(x = Yr.day, y = nobs)) +
   theme_bw() +
   theme(panel.grid = element_blank(), strip.background = element_blank()) +
   labs(x = 'Day of the Year', y = 'Data Count', color = 'Parameter') +
-  scale_color_manual(values =  c("red", "green", "blue", "black", "gray", "cyan", "brown", "orange")) +
+  scale_color_manual(values =  c("red", "green", "blue", "black", "gray", "cyan", "orange", "brown")) +
   geom_vline(xintercept = c(166, 258), linetype = 3)
 
 ggsave('SoL_graphics/doy_vertical.png', height = 6, width = 5)  
