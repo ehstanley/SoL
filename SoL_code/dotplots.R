@@ -190,7 +190,7 @@ dotchart2(log10(doc_summ$lake_area_ha),  dotsize = 2, add = TRUE, col = my.cols[
 par(fig = c(0, 1, 0, 1), oma = c(0, 0, 0, 0), mar = c(0, 0, 0, 0), new = TRUE)
 plot(0, 0, type = "n", bty = "n", xaxt = "n", yaxt = "n")
 legend(0.37,.85, legend = c("Population", "TN", "Chl", "DOC"), 
-       pch = 16, pt.cex = 1.8, bty = "o", col = c(add.alpha('black', 0.7), my.cols[c(1,2,4)]), 
+       pch = 16, pt.cex = 1.8, bty = "o", col = c(add.alpha('black', 0.7), my.cols[c(1,3,4)]), 
        cex =1, horiz = F)
 dev.off()
 
