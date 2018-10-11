@@ -561,7 +561,7 @@ no2no3.day <- as.data.frame(table(SoLno2no3$day))
 names(no2no3.day) <- c("Yr.day", "no2no3_f")
 no2no3.day$Yr.day <- as.integer(no2no3.day$Yr.day)
 
-tn.day <- as.data.frame(table(SoLtn_measured$day))
+tn.day <- as.data.frame(table(SoLtn$day))
 names(tn.day) <- c("Yr.day", "tn_f")
 tn.day$Yr.day <- as.integer(tn.day$Yr.day)
 
@@ -647,4 +647,33 @@ legend("topleft", legend = c("Chl a", "TP", "TN", "TKN", "NO3", "DOC", "Color"),
 abline(v = 166, lty = 3, col = "black")
 abline(v = 258, lty = 3, col = "black")
 
+## ggplot version stacked vertically
+jday_long <- tidyr::gather(Jday2, key = 'variable', value = 'nobs', -Yr.day) %>%
+  mutate(variable = gsub('_f', '', variable)) %>%
+  mutate(variable_type = case_when(
+    variable %in% c('secchi', 'chl', 'tp') ~ 'Trophic',
+    variable %in% c('color', 'doc') ~ 'Carbon',
+    variable %in% c('tn', 'nh4', 'no2no3') ~ 'Nitrogen'))
+head(jday_long)
 
+jday_long$variable_type <- factor(jday_long$variable_type, levels = c('Trophic', 'Nitrogen', 'Carbon'))
+jday_long$variable <- factor(jday_long$variable, levels = c('secchi', 'chl', 'tp', 'tn', 'nh4', 'no2no3', 'color', 'doc'))
+jday_long <- mutate(jday_long, variable = recode(variable, secchi = 'Secchi',
+                                                 chl = 'Chl a', 
+                                                 tp = 'TP', 
+                                                 tn = 'TN',
+                                                 nh4 = 'NH4',
+                                                 no2no3 = 'NO3',
+                                                 color = 'Color', 
+                                                 doc = 'DOC'))
+p <- ggplot(jday_long, aes(x = Yr.day, y = nobs)) +
+  geom_line(aes(color = variable, group = variable)) +
+  facet_wrap(~variable_type, ncol = 1, scales = 'free_y') +
+  theme_bw() +
+  theme(panel.grid = element_blank(), strip.background = element_blank()) +
+  labs(x = 'Day of the Year', y = 'Data Count', color = 'Parameter') +
+  scale_color_manual(values =  c("red", "green", "blue", "black", "gray", "cyan", "orange", "brown")) +
+  geom_vline(xintercept = c(166, 258), linetype = 3)
+
+ggsave('SoL_graphics/doy_vertical.png', height = 6, width = 5)  
+  
