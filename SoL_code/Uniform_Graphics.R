@@ -15,7 +15,8 @@ tiff(filename = "base_plot.tiff",
      height = 2,
      units = "in",res = 300,
      pointsize = 10,
-     family="sans")
+     family="sans",
+     compression = "lzw")
 
 #Change mfrow for multi-panel plots but don't change margins
 par(mfrow = c(1,1),
@@ -42,4 +43,10 @@ ggplot() + geom_point(aes(x=x,y=y)) +
   theme(text=element_text(size=10,  family="sans")) +
   xlab("X axis label") + ylab("Y axis label")
 
-ggsave("ggplot.tiff",device = "tiff",width = 3.5,height = 2,dpi = 300,units = "in")
+ggsave("ggplot.tiff",
+       device = "tiff",
+       width = 3.5,
+       height = 2,
+       dpi = 300,
+       units = "in",
+       compression="lzw")
