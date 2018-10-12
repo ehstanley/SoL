@@ -1,79 +1,66 @@
 #generating some graphs to display contribution of individual lakes to all observations
 
 library(dplyr)
-setwd("C:/Users/Nobody/Documents/LocalR/SoL/SoL_data")
-SoL3 <- readRDS("SoL_data.rds")
+
+sol <- readRDS("SoL_data/SoL_data.rds")
 
 #getting the total number of observations per lake for each variable
-secchi <- SoL3[!is.na(SoL3$secchi),]
-secchi.lake = aggregate(secchi$secchi, by = list(secchi$lagoslakeid), FUN = length)
-secchi.lake <- rename(secchi.lake, agoslakeid = Group.1, secchi.count = x)
-
-chl <- SoL3[!is.na(SoL3$chla),]
+chl <- sol[!is.na(sol$chla),]
 chl.lake = aggregate(chl$chla, by = list(chl$lagoslakeid), FUN = length)
 chl.lake <- rename(chl.lake, lagoslakeid = Group.1, chl.count = x)
 
-color <- SoL3[!is.na(SoL3$colort),]
+color <- sol[!is.na(sol$colort),]
 color.lake = aggregate(color$colort, by = list(color$lagoslakeid), FUN = length)
 color.lake <- rename(color.lake, lagoslakeid = Group.1, color.count = x)
 
-doc<- SoL3[!is.na(SoL3$doc),]
+doc<- sol[!is.na(sol$doc),]
 doc.lake = aggregate(doc$doc, by = list(doc$lagoslakeid), FUN = length)
 doc.lake <- rename(doc.lake, lagoslakeid = Group.1, doc.count = x)
 
-nh4<- SoL3[!is.na(SoL3$nh4),]
+nh4<- sol[!is.na(sol$nh4),]
 nh4.lake = aggregate(nh4$nh4, by = list(nh4$lagoslakeid), FUN = length)
 nh4.lake <- rename(nh4.lake, lagoslakeid = Group.1, nh4.count = x)
 
-no2no3<- SoL3[!is.na(SoL3$no2no3),]
+no2no3<- sol[!is.na(sol$no2no3),]
 no2no3.lake = aggregate(no2no3$no2no3, by = list(no2no3$lagoslakeid), FUN = length)
 no2no3.lake <- rename(no2no3.lake, lagoslakeid = Group.1, no2no3.count = x)
 
-srp<- SoL3[!is.na(SoL3$srp),]
-srp.lake = aggregate(srp$srp, by = list(srp$lagoslakeid), FUN = length)
-srp.lake <- rename(srp.lake, lagoslakeid = Group.1, srp.count = x)
+secchi <- sol[!is.na(sol$secchi),]
+secchi.lake = aggregate(secchi$secchi, by = list(secchi$lagoslakeid), FUN = length)
+secchi.lake <- rename(secchi.lake, lagoslakeid = Group.1, secchi.count = x)
 
-tkn<- SoL3[!is.na(SoL3$tkn),]
-tkn.lake = aggregate(tkn$tkn, by = list(tkn$lagoslakeid), FUN = length)
-tkn.lake <- rename(tkn.lake, lagoslakeid = Group.1, tkn.count = x)
-
-tn<- SoL3[!is.na(SoL3$tn),]
+tn<- sol[!is.na(sol$tn),]
 tn.lake = aggregate(tn$tn, by = list(tn$lagoslakeid), FUN = length)
 tn.lake <- rename(tn.lake, lagoslakeid = Group.1, tn.count = x)
 
-tp<- SoL3[!is.na(SoL3$tp),]
+tp<- sol[!is.na(sol$tp),]
 tp.lake = aggregate(tp$tp, by = list(tp$lagoslakeid), FUN = length)
 tp.lake <- rename(tp.lake, lagoslakeid = Group.1, tp.count = x)
 
 #organizing data to get info on # lakes into bins based on # of observations/lake
-secchi_hist<- hist(secchi.lake$secchi.count, breaks = c(1, 2, 5, 10, 20, 50, 100, 200, 500, 1000, 2000, 3500))
 chl_hist <- hist(chl.lake$chl.count, breaks = c(1, 2, 5, 10, 20, 50, 100, 200, 500, 1000, 2000, 3500))
 color_hist <- hist(color.lake$color.count, breaks = c(1, 2, 5, 10, 20, 50, 100, 200, 500, 1000, 2000, 3500))
 doc_hist <- hist(doc.lake$doc.count, breaks = c(1, 2, 5, 10, 20, 50, 100, 200, 500, 1000, 2000, 3500))
 nh4_hist <- hist(nh4.lake$nh4.count, breaks = c(1, 2, 5, 10, 20, 50, 100, 200, 500, 1000, 2000, 3500))
 no2no3_hist <- hist(no2no3.lake$no2no3.count, breaks = c(1, 2, 5, 10, 20, 50, 100, 200, 500, 1000, 2000, 3500))
-srp_hist <- hist(srp.lake$srp.count, breaks = c(1, 2, 5, 10, 20, 50, 100, 200, 500, 1000, 2000, 3500))
-tkn_hist <- hist(tkn.lake$tkn.count, breaks = c(1, 2, 5, 10, 20, 50, 100, 200, 500, 1000, 2000, 3500))
+secchi_hist<- hist(secchi.lake$secchi.count, breaks = c(1, 2, 5, 10, 20, 50, 100, 200, 500, 1000, 2000, 3500))
 tn_hist <- hist(tn.lake$tn.count, breaks = c(1, 2, 5, 10, 20, 50, 100, 200, 500, 1000, 2000, 3500))
 tp_hist <- hist(tp.lake$tp.count, breaks = c(1, 2, 5, 10, 20, 50, 100, 200, 500, 1000, 2000, 3500))
 
 #counts- categories of # of observations/lake
 counts <- data.frame(c(1, 2, 5, 10, 20, 50, 100, 200, 500, 1000, 2000))
 counts <- rename(counts, counts=c.1..2..5..10..20..50..100..200..500..1000..2000.)
-secchi.count <- secchi_hist$counts
 chl.count <-chl_hist$counts
 color.count <- color_hist$counts
 doc.count <- doc_hist$counts
 nh4.count <- nh4_hist$counts
 no2no3.count <-no2no3_hist$counts
-srp.count <- srp_hist$counts
-tkn.count <-tkn_hist$counts
+secchi.count <- secchi_hist$counts
 tn.count <- tn_hist$counts
 tp.count <- tp_hist$counts
 
-counts <-cbind(counts, secchi.count, chl.count, color.count, doc.count, nh4.count,
-               no2no3.count, srp.count, tkn.count, tn.count, tp.count)
-
+counts <-cbind(counts, chl.count, color.count, doc.count, nh4.count,
+               no2no3.count, secchi.count, tn.count, tp.count)
 
 plot(log10(counts$counts), counts$secchi.count, type= "l", ylim = c(0, 5000), col= "red",
      xlab = "Log10(Observations per Lake)",
@@ -153,36 +140,16 @@ no3.2$fraction <- (no3.2$sum/68476)
 no3.2$lake.number <- c(1:8173)
 no3.2$pct <- no3.2$lake.number/8173
 
-srp2 <- data.frame(sort(srp.lake$srp.count))
-srp2$sum <- cumsum(srp2$sort.srp.lake.srp.count.)
-srp2$fraction <- (srp2$sum/11229)
-srp2$lake.number <- c(1:1566)
-srp2$pct <- srp2$lake.number/1566
 
 
-
-plot(s2$pct, s2$fraction, xlab = "Fraction of lakes", ylab = "Fraction of data", 
-     pch = 15, cex= 0.5, col = "red")
+plot(chl2$pct, chl2$fraction, cex.lab = 1.5, xlab = "Fraction of lakes", ylab = "Fraction of data", 
+     pch = 15, cex= 0.5, col = "green")
 par(new = TRUE)
-plot(chl2$pct, chl2$fraction, xlab = "", ylab = "", xaxt='n', yaxt='n', pch = 15, cex= 0.5, col = "green")
+plot(n2$pct, n2$fraction, axes = FALSE, xlab = "", ylab = "", xaxt='n', yaxt='n', pch = 15, cex= 0.5, col = "black")
 par(new = TRUE)
-plot(p2$pct, p2$fraction, xlab = "", ylab = "", xaxt='n', yaxt='n', pch = 15, cex= 0.5, col = "blue")
-par(new = TRUE)
-plot(n2$pct, n2$fraction, xlab = "", ylab = "", xaxt='n', yaxt='n', pch = 15, cex= 0.5, col = "salmon")
-par(new = TRUE)
-plot(doc2$pct, doc2$fraction, xlab = "", ylab = "", xaxt='n', yaxt='n', pch = 15, cex= 0.5, col = "brown")
-par(new = TRUE)
-plot(color2$pct, color2$fraction, xlab = "", ylab = "", xaxt='n', yaxt='n', pch = 15, cex= 0.5, col = "orange")
-par(new = TRUE)
-plot(nh4.2$pct, nh4.2$fraction, xlab = "", ylab = "", xaxt='n',  yaxt='n', pch = 15, cex= 0.5, col = "black")
-par(new = TRUE)
-plot(no3.2$pct, no3.2$fraction, xlab = "", ylab = "", xaxt='n', yaxt='n', pch = 15, cex= 0.5, col = "cyan")
-par(new = TRUE)
-plot(srp2$pct, srp2$fraction, xlab = "", ylab = "", xaxt='n', yaxt='n', pch = 15, cex= 0.5, col = "darkgoldenrod")
-
-legend("topleft", legend = c("Secchi", "Chl a", "TP", "TN", "DOC", "Color", "NH4", "NO2NO3", "SRP"),
-       cex = 0.8, lty=c(1,1), col = c("red", "green", "blue","salmon", "brown", "orange",
-                                      "black", "cyan", "darkgoldenrod"))
+plot(doc2$pct, doc2$fraction, axes = FALSE, xlab = "", ylab = "", xaxt='n', yaxt='n', pch = 15, cex= 0.5, col = "brown")
+legend("topleft", legend = c("Chl", "TN", "DOC"),
+       cex = 1.1, lty=c(1,1), col = c("green", "black", "brown"))
 
 par(mfrow=c(1,2))
 plot(s2$pct, s2$fraction, xlab = "Fraction of lakes", ylab = "Fraction of data", 
@@ -209,4 +176,31 @@ par(new = TRUE)
 
 legend("topleft", legend = c("TN", "NH4", "NO2NO3"),
        cex = 0.8, lty=c(1,1), col = c("black", "orange", "cyan"))
+
+dev.off()
+
+plot(s2$pct, s2$fraction, xlab = "", ylab = "", 
+     pch = 15, cex= 0.5, col = "red")
+par(new = TRUE)
+plot(chl2$pct, chl2$fraction, xlab = "", ylab = "", xaxt='n', yaxt='n', pch = 15, cex= 0.5, col = "green")
+par(new = TRUE)
+plot(p2$pct, p2$fraction, xlab = "", ylab = "", xaxt='n', yaxt='n', pch = 15, cex= 0.5, col = "blue")
+legend("topleft", legend = c("Secchi", "Chl a", "TP"),
+       cex = 0.8, lty=c(1,1), col = c("red", "green", "blue"))
+
+
+plot(n2$pct, n2$fraction, xlab = "", ylab = "Fraction of data", pch = 15, cex= 0.5, col = "black")
+par(new = TRUE)
+plot(nh4.2$pct, nh4.2$fraction, xlab = "", ylab = "", xaxt='n',  yaxt='n', pch = 15, cex= 0.5, col = "cyan")
+par(new = TRUE)
+plot(no3.2$pct, no3.2$fraction, xlab = "", ylab = "", xaxt='n', yaxt='n', pch = 15, cex= 0.5, col = "dodgerblue")
+legend("topleft", legend = c("TN", "NH4", "NO2NO3"),
+       cex = 0.8, lty=c(1,1), col = c("black", "cyan", "dodgerblue"))
+
+
+plot(color2$pct, color2$fraction, xlab = "Fraction of lakes", ylab = "", pch = 15, cex= 0.5, col = "orange")
+par(new = TRUE)
+plot(doc2$pct, doc2$fraction, xlab = "", ylab = "", xaxt='n', yaxt='n', pch = 15, cex= 0.5, col = "brown")
+legend("topleft", legend = c("Color", "DOC"),
+       cex = 0.8, lty=c(1,1), col = c("orange", "brown"))
 
