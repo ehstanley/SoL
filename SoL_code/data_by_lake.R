@@ -2,7 +2,7 @@
 
 library(dplyr)
 setwd("C:/Users/Nobody/Documents/LocalR/SoL/SoL_data")
-SoL3 <- readRDS("SoL_data.rds")
+SoL3 <- readRDS("SoL_data/SoL_data.rds")
 
 #getting the total number of observations per lake for each variable
 secchi <- SoL3[!is.na(SoL3$secchi),]
@@ -159,6 +159,46 @@ srp2$fraction <- (srp2$sum/11229)
 srp2$lake.number <- c(1:1566)
 srp2$pct <- srp2$lake.number/1566
 
+tiff(filename = "SoL_graphics/cum_freq.tiff",
+     width = 3.5,
+     height = 3.5,
+     units = "in",res = 300,
+     pointsize = 10,
+     family="sans",
+     compression = "lzw")
+
+#Change mfrow for multi-panel plots but don't change margins
+par(mfrow = c(1,1),
+    oma = c(0,0,0,0),
+    mar=c(2.4,3.5,.5,.5),
+    pty="s")
+plot.new( )
+plot.window( xlim=c(0,1), ylim=c(0,1) )
+grid()
+box(lwd=1)
+c_chl = rgb(43, 140, 190, max=255, alpha=255)
+lines(chl2$pct, chl2$fraction,
+     xlab="",ylab="",
+     xaxt="n",yaxt="n",col=c_chl,
+     xlim=c(0,1),ylim=c(0,1),
+     type="l",lwd=2.5)
+## add axis ticks
+axis(1, label = FALSE, tck = -0.015)
+axis(2, label = FALSE, tck = -0.015)
+## add the labels
+axis(1, line = -0.7, lwd = 0, cex.axis = 0.9)
+axis(2, line = -.4, lwd = 0, cex.axis = 0.9, las=1)
+mtext(side=1,"Fraction of lakes", line=1.2)
+#adjust the line value to move the y axis label in and out
+#based on how many digits are in the y ticks
+mtext(side=2, "Fraction of data", line = 1.9)
+c_tn = rgb(247,104, 161, max=255, alpha=255)
+lines(n2$pct, n2$fraction,col=c_tn,lwd=2.5)
+c_doc = rgb(140, 81, 10, max=255, alpha=255)
+lines(doc2$pct, doc2$fraction,col=c_doc,lwd=2.5)
+legend("topleft", legend = c("Chl", "TN", "DOC"), 
+       lty=1, col = c(c_chl,c_tn,c_doc),bty="n",lwd=2)
+dev.off()
 
 
 plot(s2$pct, s2$fraction, xlab = "Fraction of lakes", ylab = "Fraction of data", 
