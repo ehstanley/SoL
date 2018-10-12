@@ -21,17 +21,19 @@ population$res_time_proxy <- population$iws_ha/population$lake_area_ha
 # create state order
 # for now, doing it from most to least number of lakes in the population
 
-state_order <- filter(population, lake_area_ha >= 4, !(state_name %in% "OUT_OF_COUNTY_STATE")) %>%
+state_order <- filter(population, !(state_name %in% "OUT_OF_COUNTY_STATE")) %>%
   group_by(state_name) %>%
   summarise(count = n()) %>%
   arrange(-count) %>%
   pull(state_name)
 
+# define groups of variables
+#sample <- mutate(trophic = sum(cis.na()))
 variable_summ <- function(input_dat, variable) {
   
   variable_quo <- sym(variable)
   sample_stats <- filter(input_dat, !is.na(!!variable_quo), !(state_name %in% "OUT_OF_COUNTY_STATE")) %>%
-    filter(lake_area_ha >= 4) %>%
+    #filter(lake_area_ha >= 4) %>%
     select(lagoslakeid, state_name, lake_area_ha, res_time_proxy) %>%
     distinct() %>%
     group_by(state_name) %>%
@@ -39,7 +41,7 @@ variable_summ <- function(input_dat, variable) {
     rename()
   
   count_stats <- filter(input_dat, !is.na(!!variable_quo), !(state_name %in% "OUT_OF_COUNTY_STATE")) %>%
-    filter(lake_area_ha >= 4) %>%
+    #filter(lake_area_ha >= 4) %>%
     select(lagoslakeid, state_name) %>%
     distinct() %>%
     group_by(state_name) %>%
@@ -47,7 +49,7 @@ variable_summ <- function(input_dat, variable) {
     mutate(prop_count = count/sum(count))
   
   iso_stats <- filter(input_dat, !is.na(!!variable_quo), !(state_name %in% "OUT_OF_COUNTY_STATE")) %>%
-    filter(lake_area_ha >= 4) %>%
+    #filter(lake_area_ha >= 4) %>%
     select(lagoslakeid, state_name, lakeconnection) %>%
     mutate(lakeconnection = as.factor(lakeconnection)) %>%
     distinct() %>%
@@ -58,14 +60,14 @@ variable_summ <- function(input_dat, variable) {
     select(state_name, prop_iso)
   
   sampled_n <- filter(input_dat, !is.na(!!variable_quo), !(state_name %in% "OUT_OF_COUNTY_STATE")) %>%
-    filter(lake_area_ha >= 4) %>%
+    #filter(lake_area_ha >= 4) %>%
     select(lagoslakeid, state_name) %>% 
     distinct() %>%
     group_by(state_name) %>%
     summarise(count_sample = n())
   
   pop_n <- filter(population, !(state_name %in% "OUT_OF_COUNTY_STATE")) %>%
-    filter(lake_area_ha >= 4) %>%
+    #filter(lake_area_ha >= 4) %>%
     select(lagoslakeid, state_name) %>% 
     distinct() %>%
     group_by(state_name) %>%
@@ -105,6 +107,8 @@ add.alpha <- function(col, alpha=0.8){
 }
 my.cols <- add.alpha(my.cols)
 
+
+###### morphology ######
 png("SoL_graphics/Morphology_state_dotplot.png", height = 600, width = 1400)
 par(mfrow=c(1,4), cex = 1, oma = c(0,5,3,3))
 par(mar=c(5,0,0,0))
@@ -119,12 +123,13 @@ dotchart2(chl_summ$prop_count,  dotsize = 2, add = TRUE, col = my.cols[3])
 dotchart2(doc_summ$prop_count,  dotsize = 2, add = TRUE, col = my.cols[4])
 
 # lake area
-dotchart2(pop_summ$lake_area_ha, labels = "",dotsize = 2, xlab = "Area (ha)", xlim = c(0, 600), 
-          bty= "L", width.factor = .2, col = add.alpha('black', 0.7))
-dotchart2(tn_summ$lake_area_ha,  dotsize = 2, add = TRUE, col = my.cols[1])
-dotchart2(tp_summ$lake_area_ha,  dotsize = 2, add = TRUE, col = my.cols[2])
-dotchart2(chl_summ$lake_area_ha,  dotsize = 2, add = TRUE, col = my.cols[3])
-dotchart2(doc_summ$lake_area_ha,  dotsize = 2, add = TRUE, col = my.cols[4])
+dotchart2(log10(pop_summ$lake_area_ha), labels = pop_summ$state_name,dotsize = 2, xlab = "Area (ha)", 
+          bty= "L", width.factor = .2, col = add.alpha('black', 0.7), xlim = c(0.9, 4.1),
+          axisat = c(0:4), axislabels = c('1', '10', '100', '1000', '10000'))
+dotchart2(log10(tn_summ$lake_area_ha),  dotsize = 2, add = TRUE, col = my.cols[1])
+#dotchart2(log10(tp_summ$lake_area_ha),  dotsize = 2, add = TRUE, col = my.cols[2])
+dotchart2(log10(chl_summ$lake_area_ha),  dotsize = 2, add = TRUE, col = my.cols[3])
+dotchart2(log10(doc_summ$lake_area_ha),  dotsize = 2, add = TRUE, col = my.cols[4])
 
 # residence time proxy or WSA/LA
 dotchart2(pop_summ$res_time_proxy, labels = "", xlab = "WSA:LA", dotsize = 2, xlim = c(0, 150), 
@@ -149,6 +154,7 @@ legend(-.9,1.05, legend = c("Population", "TN Sample", "TP Sample", "Chl Sample"
        pch = 16, pt.cex = 2, bty = "n", col = c("black", my.cols), cex =1, horiz = TRUE)
 dev.off()
 
+###### lakes sampled #####
 # just proportion of lakes sampled
 png("SoL_graphics/proportion_sampled_state_dotplot.png", height = 600, width = 400)
 #par(mfrow=c(1,4), cex = 1, oma = c(0,5,3,3))
@@ -169,6 +175,23 @@ legend(-0.6,1, legend = c("TN Sample", "TP Sample", "Chl Sample", "DOC Sample"),
        pch = 16, pt.cex = 2, bty = "n", col = my.cols, cex =1,ncol = 2)
 dev.off()
 
+##### lake area solo fig #########
+png("SoL_graphics/lakearea_repvars_dotplot.png", height = 600, width = 450)
+par(cex = 1, oma = c(0,5,3,3))
+par(mar=c(5,0,0,0))
+dotchart2(log10(pop_summ$lake_area_ha), labels = pop_summ$state_name,dotsize = 2, xlab = "Area (ha)", 
+          bty= "L", width.factor = .2, col = add.alpha('black', 0.7), xlim = c(0.9, 4.1),
+          axisat = c(0:4), axislabels = c('1', '10', '100', '1000', '10000'))
+dotchart2(log10(tn_summ$lake_area_ha),  dotsize = 2, add = TRUE, col = my.cols[1])
+#dotchart2(log10(tp_summ$lake_area_ha),  dotsize = 2, add = TRUE, col = my.cols[2])
+dotchart2(log10(chl_summ$lake_area_ha),  dotsize = 2, add = TRUE, col = my.cols[3])
+dotchart2(log10(doc_summ$lake_area_ha),  dotsize = 2, add = TRUE, col = my.cols[4])
 
+par(fig = c(0, 1, 0, 1), oma = c(0, 0, 0, 0), mar = c(0, 0, 0, 0), new = TRUE)
+plot(0, 0, type = "n", bty = "n", xaxt = "n", yaxt = "n")
+legend(0.37,.85, legend = c("Population", "TN", "Chl", "DOC"), 
+       pch = 16, pt.cex = 1.8, bty = "o", col = c(add.alpha('black', 0.7), my.cols[c(1,3,4)]), 
+       cex =1, horiz = F)
+dev.off()
 
 
