@@ -212,6 +212,28 @@ mtext("Sample Size", side=1, line=2.5)
 text(8.1, 60, "c) TP", cex=1.2)
 dev.off()
 
+png("SoL_graphics/ViolinResample3Panel100.png", width=3.5, height=7, units='in', res=300)
+par(mfrow=c(3,1), mar=c(0,0,0,0), oma=c(4,4,1,1))
+vioplot(vio1sec,vio2sec, vio3sec, vio5sec, vio10sec, vio20sec, vio30sec, vio40sec,
+        names=c("", "", "", "", "", "", "", ""),
+        col="lightgrey", ylim=c(1,105))
+#mtext("Percent Error", side=2, line=2)
+text(7.8, 100, "a) Secchi", cex=1.2)
+
+vioplot(vio1chl,vio2chl, vio3chl, vio5chl, vio10chl, vio20chl, vio30chl, vio40chl,
+        names=c("", "", "", "", "", "", "", ""),
+        col="lightgrey")
+mtext("Percent Error", side=2, line=2)
+text(7.4, 100, "b) Chlorophyll", cex=1.2)
+
+vioplot(vio1tp,vio2tp, vio3tp, vio5tp, vio10tp, vio20tp, vio30tp, vio40tp,
+        names=c("1","2","3","5", "10", "20", "30", "40"),
+        col="lightgrey", ylim=c(1, 105))
+#mtext("Percent Error", side=2, line=2)
+mtext("Sample Size", side=1, line=2.5)
+text(8.1, 100, "c) TP", cex=1.2)
+dev.off()
+
 # png(paste("SoL_graphics/",parameter.choice,"_TimeResampleViolin.png",sep=""), width=6, height=5, units='in', res=300)
 # vioplot(vio1,vio2,vio3, vio5, vio10, vio20, vio30, vio40, 
 #         names=c("1","2","3","5", "10", "20", "30", "40"), 
