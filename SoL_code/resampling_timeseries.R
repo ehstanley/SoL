@@ -8,9 +8,10 @@ library(brotools)
 
 data = readRDS("SoL_data/SoL_data.rds")
 
+#path of least resistance to painful 
 
 #Choose which parameter to run
-parameter.choice = "tp"
+parameter.choice = "secchi"
 
 variable.dat = na.omit(data[,c("lagoslakeid", "year", parameter.choice,"sampledate")])
 names(variable.dat)[3] = "value"
@@ -159,24 +160,66 @@ for (j in 1:length(n)) {
 }
 lake.ss <- lake.ss %>% drop_na()
 
-vio1<-lake.ss$med1obs
-vio2<-lake.ss$med2obs
-vio3<-lake.ss$med3obs
-vio5<-lake.ss$med5obs
-vio10<-lake.ss$med10obs
-vio20<-lake.ss$med20obs
-vio30<-lake.ss$med30obs
-vio40<-lake.ss$med40obs
+#change to saving these as parameter.choice specific estimates to be able to make a 3 panel vio plot later - loop through for each individual parameter.choice then save the following objects for the plots after the appropriate parameter. (suboptimal but whatever)
+
+vio1tp<-lake.ss$med1obs
+vio2tp<-lake.ss$med2obs
+vio3tp<-lake.ss$med3obs
+vio5tp<-lake.ss$med5obs
+vio10tp<-lake.ss$med10obs
+vio20tp<-lake.ss$med20obs
+vio30tp<-lake.ss$med30obs
+vio40tp<-lake.ss$med40obs
+
+vio1sec<-lake.ss$med1obs
+vio2sec<-lake.ss$med2obs
+vio3sec<-lake.ss$med3obs
+vio5sec<-lake.ss$med5obs
+vio10sec<-lake.ss$med10obs
+vio20sec<-lake.ss$med20obs
+vio30sec<-lake.ss$med30obs
+vio40sec<-lake.ss$med40obs
 
 
-png(paste("SoL_graphics/",parameter.choice,"_TimeResampleViolin.png",sep=""), width=6, height=5, units='in', res=300)
-vioplot(vio1,vio2,vio3, vio5, vio10, vio20, vio30, vio40, 
-        names=c("1","2","3","5", "10", "20", "30", "40"), 
+vio1chl<-lake.ss$med1obs
+vio2chl<-lake.ss$med2obs
+vio3chl<-lake.ss$med3obs
+vio5chl<-lake.ss$med5obs
+vio10chl<-lake.ss$med10obs
+vio20chl<-lake.ss$med20obs
+vio30chl<-lake.ss$med30obs
+vio40chl<-lake.ss$med40obs
+
+png("SoL_graphics/ViolinResample3Panel.png", width=3.5, height=7, units='in', res=300)
+par(mfrow=c(3,1), mar=c(0,0,0,0), oma=c(4,4,1,1))
+vioplot(vio1sec,vio2sec, vio3sec, vio5sec, vio10sec, vio20sec, vio30sec, vio40sec,
+        names=c("", "", "", "", "", "", "", ""),
+        col="lightgrey", ylim=c(1,68))
+#mtext("Percent Error", side=2, line=2)
+text(7.8, 65, "a) Secchi", cex=1.2)
+
+vioplot(vio1chl,vio2chl, vio3chl, vio5chl, vio10chl, vio20chl, vio30chl, vio40chl,
+      names=c("", "", "", "", "", "", "", ""),
         col="lightgrey")
 mtext("Percent Error", side=2, line=2)
-mtext("Sample Size", side=1, line=2)
-abline(h=0)
+text(7.4, 100, "b) Chlorophyll", cex=1.2)
+
+vioplot(vio1tp,vio2tp, vio3tp, vio5tp, vio10tp, vio20tp, vio30tp, vio40tp,
+        names=c("1","2","3","5", "10", "20", "30", "40"),
+        col="lightgrey", ylim=c(1, 65))
+#mtext("Percent Error", side=2, line=2)
+mtext("Sample Size", side=1, line=2.5)
+text(8.1, 60, "c) TP", cex=1.2)
 dev.off()
+
+# png(paste("SoL_graphics/",parameter.choice,"_TimeResampleViolin.png",sep=""), width=6, height=5, units='in', res=300)
+# vioplot(vio1,vio2,vio3, vio5, vio10, vio20, vio30, vio40, 
+#         names=c("1","2","3","5", "10", "20", "30", "40"), 
+#         col="lightgrey")
+# mtext("Percent Error", side=2, line=2)
+# mtext("Sample Size", side=1, line=2)
+# abline(h=0)
+# dev.off()
 
 (summary_table <- brotools::describe(lake.ss))
 write_csv(x = summary_table,path = paste("SoL_data/",parameter.choice,"_TimeResamplestats.csv",sep=""))
