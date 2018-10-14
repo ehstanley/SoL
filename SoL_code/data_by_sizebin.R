@@ -190,31 +190,62 @@ count$doc_pct <- (count$doc_count/count$census)*100
 
 count$bin <- c(1:10)
 
-plot(count$bin, count$secchi_pct, xlab = "Size Bin", ylab = "Percent with data",
-     cex.lab = 1.5, type = "o", pch = 19, col = "red", ylim  = c(0, 100))
+
+tiff(filename = "SoL_graphics/fig_S2.tiff",
+     width = 3.5,
+     height = 2,
+     units = "in",res = 300,
+     pointsize = 10,
+     family="sans",
+     compression = "lzw")
+
+#Change mfrow for multi-panel plots but don't change margins
+par(mfrow = c(1,1),
+    oma = c(0,0,0,0),
+    mar=c(2.4,3.5,.5,.5))
+plot(count$bin, count$secchi_pct, xlab = "", ylab = "",
+     xaxt = "n", yaxt = "n", type = "o", pch = 16, col = "dodgerblue2", ylim  = c(0, 100))
 par(new=T)
-plot(count$bin, count$chl_pct, type = "o", pch = 19, col = "green", ylim = c(0, 100), 
+plot(count$bin, count$chl_pct, type = "o", pch = 16, col = "darkblue", ylim = c(0, 100), 
      axes = FALSE, xlab = "", ylab = "")
 par(new=T)
-plot(count$bin, count$tp_pct, type = "o", pch = 19, col = "blue", ylim = c(0, 100), 
+plot(count$bin, count$tp_pct, type = "o", pch = 16, col = "lightskyblue1", ylim = c(0, 100), 
      axes = FALSE, xlab = "", ylab = "")
 par(new = T)
-plot(count$bin, count$tn_pct, type = "o", pch = 19, col = "black", ylim = c(0, 100), 
+plot(count$bin, count$tn_pct, type = "o", pch = 16, col = "darkorchid4", ylim = c(0, 100), 
      axes = FALSE, xlab = "", ylab = "")
 par(new = T)
-plot(count$bin, count$nh4_pct, type = "o", pch = 19, col = "grey", ylim = c(0, 100), 
+plot(count$bin, count$nh4_pct, type = "o", pch = 16, col = "darkorchid2", ylim = c(0, 100), 
      axes = FALSE, xlab = "", ylab = "")
 par(new = T)
-plot(count$bin, count$no3_pct, type = "o", pch = 19, col = "cyan", ylim = c(0, 100), 
+plot(count$bin, count$no3_pct, type = "o", pch = 16, col = "orchid1", ylim = c(0, 100), 
      axes = FALSE, xlab = "", ylab = "")
 par(new = T)
-plot(count$bin, count$color_pct, type = "o", pch = 19, col = "orange", ylim = c(0, 100), 
+plot(count$bin, count$color_pct, type = "o", pch = 16, col = "tan4", ylim = c(0, 100), 
      axes = FALSE, xlab = "", ylab = "")
 par(new = T)
-plot(count$bin, count$doc_pct, type = "o", pch = 19, col = "brown", ylim = c(0, 100), 
+plot(count$bin, count$doc_pct, type = "o", pch = 16, col = "tan2", ylim = c(0, 100), 
      axes = FALSE, xlab = "", ylab = "")
-legend("topleft", legend = c("Secchi", "Chl", "TP", "TN", "NH4", "NO3", "Color", "DOC"), cex = 0.8,
-       lty = c(1,1), col = c("red", "green", "blue", "black", "gray", "cyan", "orange", "brown"))
+legend("topleft", legend = c("Secchi", "Chl", "TP", "TN", "NH4", "NO3", "Color", "DOC"), cex = 0.6,
+       lty = c(1,1), col = c("dodgerblue2", "darkblue", "lightskyblue1", "darkorchid4", 
+                             "darkorchid2", "orchid1", "tan4", "tan2"),bty = "n")
+
+## add axis ticks
+axis(1, label = FALSE, tck = -0.015)
+axis(2, label = FALSE, tck = -0.015)
+## add the labels
+axis(1, line = -0.7, lwd = 0, cex.axis = 0.7)
+axis(2, line = -.4, lwd = 0, cex.axis = 0.7, las=1)
+mtext(side=1,"Size bin", line=1.2)
+#adjust the line value to move the y axis label in and out
+#based on how many digits are in the y ticks
+mtext(side=2, "Percent of lakes with data", line = 2.3)
+dev.off()
+
+
+
+
+
 
 
 
