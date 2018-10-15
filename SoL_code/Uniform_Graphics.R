@@ -9,6 +9,20 @@ y = rnorm(n = 10, mean = 1000, sd= 5)
 ####proposed narrow width = 3.5 inches
 
 
+###our color selections are:
+#Secchi- darkblue
+#Chl- dodgerblue2 (boo dodgers!)
+#TP- lightskyblue1
+
+#TN- darkorchid4
+#NO3- darkorchid2
+#NH4- orchid1
+
+#Color- tan4
+#DOC- tan2
+
+
+
 #___________BASE___________#
 tiff(filename = "base_plot.tiff",
      width = 3.5,

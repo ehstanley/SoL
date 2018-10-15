@@ -204,9 +204,9 @@ par(mfrow = c(1,1),
     oma = c(0,0,0,0),
     mar=c(2.4,3.5,.5,.5))
 plot(count$bin, count$secchi_pct, xlab = "", ylab = "",
-     xaxt = "n", yaxt = "n", type = "o", pch = 16, col = "dodgerblue2", ylim  = c(0, 100))
+     xaxt = "n", yaxt = "n", type = "o", pch = 16, col = "darkblue", ylim  = c(0, 100))
 par(new=T)
-plot(count$bin, count$chl_pct, type = "o", pch = 16, col = "darkblue", ylim = c(0, 100), 
+plot(count$bin, count$chl_pct, type = "o", pch = 16, col = "dodgerblue2", ylim = c(0, 100), 
      axes = FALSE, xlab = "", ylab = "")
 par(new=T)
 plot(count$bin, count$tp_pct, type = "o", pch = 16, col = "lightskyblue1", ylim = c(0, 100), 
@@ -227,7 +227,7 @@ par(new = T)
 plot(count$bin, count$doc_pct, type = "o", pch = 16, col = "tan2", ylim = c(0, 100), 
      axes = FALSE, xlab = "", ylab = "")
 legend("topleft", legend = c("Secchi", "Chl", "TP", "TN", "NH4", "NO3", "Color", "DOC"), cex = 0.6,
-       lty = c(1,1), col = c("dodgerblue2", "darkblue", "lightskyblue1", "darkorchid4", 
+       lty = c(1,1), col = c("darkblue", "dodgerblue2", "lightskyblue1", "darkorchid4", 
                              "darkorchid2", "orchid1", "tan4", "tan2"),bty = "n")
 
 ## add axis ticks
