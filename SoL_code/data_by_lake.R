@@ -1,12 +1,7 @@
 #generating some graphs to display contribution of individual lakes to all observations
 
 library(dplyr)
-<<<<<<< HEAD
-=======
-
 SoL3 <- readRDS("SoL_data/SoL_data.rds")
->>>>>>> 9ec4887af1b0059e4c92eb52691cc6311c1a4c9d
-
 sol <- readRDS("SoL_data/SoL_data.rds")
 
 #getting the total number of observations per lake for each variable
@@ -145,8 +140,6 @@ no3.2$fraction <- (no3.2$sum/68476)
 no3.2$lake.number <- c(1:8173)
 no3.2$pct <- no3.2$lake.number/8173
 
-<<<<<<< HEAD
-=======
 srp2 <- data.frame(sort(srp.lake$srp.count))
 srp2$sum <- cumsum(srp2$sort.srp.lake.srp.count.)
 srp2$fraction <- (srp2$sum/11229)
@@ -180,8 +173,8 @@ lines(chl2$pct, chl2$fraction,
 axis(1, label = FALSE, tck = -0.015)
 axis(2, label = FALSE, tck = -0.015)
 ## add the labels
-axis(1, line = -0.7, lwd = 0, cex.axis = 0.9)
-axis(2, line = -.4, lwd =0, cex.axis = 0.9, las=1)
+axis(1, line = -0.7, lwd = 0, cex.axis = 0.7)
+axis(2, line = -.4, lwd =0, cex.axis = 0.7, las=1)
 mtext(side=1,"Fraction of lakes", line=1.2)
 #adjust the line value to move the y axis label in and out
 #based on how many digits are in the y ticks
@@ -193,7 +186,6 @@ lines(doc2$pct, doc2$fraction,col="tan2",lwd=2.5)
 legend("topleft", legend = c("Chl", "TN", "DOC"), 
        lty=1, col = c("dodgerblue2", "darkorchid4", "tan2"),bty="n",lwd=2)
 dev.off()
->>>>>>> 9ec4887af1b0059e4c92eb52691cc6311c1a4c9d
 
 
 plot(chl2$pct, chl2$fraction, cex.lab = 1.5, xlab = "Fraction of lakes", ylab = "Fraction of data", 

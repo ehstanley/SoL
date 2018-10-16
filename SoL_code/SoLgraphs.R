@@ -223,11 +223,11 @@ YR1 <-left_join(YR1, tp.nlakes.yr, by = "year")
 YR1 <-left_join(YR1, tn.nlakes.yr, by = "year")
 #missing data issue- replace NAs with zero
 YR1 <- data.frame(replace(YR1, is.na(YR1), 0))
-YR2$total <- YR2$chl+YR2$color+YR2$doc+YR2$nh4+YR2$no2no3+YR2$secchi+YR2$tn+YR2$tp+YR1$tn
-#plot(YR1$year, YR1$total)
+YR1$total <- YR1$chl+YR1$color+YR1$doc+YR1$nh4+YR1$no2no3+YR1$secchi+YR1$tn+YR1$tp+YR1$tn
+#plot(YR1$year, YR$total)
 
 
-N_lakes <- summarise_all(YR2, funs(sum))
+N_lakes <- summarise_all(YR1, funs(sum))
 N_lakes <- N_lakes[, c("chl", "color", "doc", "nh4", "no2no3", "secchi", "tp", "tn")]
 N <- as.numeric(N_lakes[1,])
 var <- names(N_lakes) 
@@ -244,14 +244,6 @@ barplot(N.totals, ylab = "Total data count", ylim = c(0, 750000),col = "darkseag
 xtick<-c("Secchi", "Chl", "TP", "NO3", "TN","NH4", "Color", "DOC")
 axis(side=1, at=seq(1, 8, by=1), labels = xtick, las = 2)
 
-#c_color = rgb(254, 196, 7, max=255, alpha=255)
-#c_doc = rgb(140, 81, 10, max=255, alpha=255)
-#c_secchi = rgb(37, 52, 148, max=255, alpha=255)
-#c_chl = rgb(43, 140, 190, max=255, alpha=255)
-#c_tp = rgb(123, 204, 196, max=255, alpha=255)
-#c_tn = rgb(247,104, 161, max=255, alpha=255)
-#c_nh4 = rgb(197, 27, 38, max=255, alpha=255)
-#c_no3 = rgb(122, 1, 119, max=255, alpha=255)
 
 
 #plot of lakes visited/year by variable over time
@@ -269,10 +261,10 @@ par(mfrow = c(1,1),
     mar=c(2.4,3.5,.5,.5))
 
 plot(YR1$year, YR1$secchi, xlim = c(1950, 2010), ylim = c(0, 4500), xlab = "", 
-     ylab = "", xaxt = "n", yaxt = "n", type = "l", lwd = 1.5, col = "dodgerblue2")
+     ylab = "", xaxt = "n", yaxt = "n", type = "l", lwd = 1.5, col = "darkblue")
 par(new=T)
 plot(YR1$year, YR1$chl, xlim = c(1950, 2010), ylim = c(0,4500), xaxt='n', xlab = "",
-     yaxt='n', ylab= "", type = "l", lwd = 1.5, col= "darkblue")
+     yaxt='n', ylab= "", type = "l", lwd = 1.5, col= "dodgerblue2")
 par(new=TRUE)
 plot(YR1$year, YR1$tp, xlim = c(1950, 2010), ylim = c(0, 4500), xaxt='n', xlab= "", 
      yaxt='n', ylab = "", type = "l", lwd = 1.5, col= "lightskyblue1")
@@ -292,7 +284,7 @@ par(new=T)
 plot(YR1$year, YR1$doc, xlim = c(1950, 2010), ylim = c(0, 4500), xaxt='n', xlab = "", 
      yaxt='n', ylab = "", type = "l", lwd = 1.5, col = "tan2")
 legend("topleft", legend = c("Secchi", "Chl", "TP", "TN", "NO3", "NH4", "Color", "DOC"), cex = 0.6,
-       lty = c(1,1), col = c("dodgerblue2", "darkblue", "lightskyblue1", "darkorchid4", 
+       lty = c(1,1), col = c("darkblue", "dodgerblue2", "lightskyblue1", "darkorchid4", 
                              "darkorchid2", "orchid1", "tan4", "tan2"), bty = "n")
 
 ## add axis ticks
