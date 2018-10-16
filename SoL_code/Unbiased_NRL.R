@@ -67,6 +67,12 @@ dat.overview <- dat.overview %>%
   dat.full <- rbind(dat.full,dat.overview)
 
 =======
+dat.overview <- dat.overview %>% gather(key = "key",value = "value",-cluster)
+p1 <- ggplot(dat.overview, aes(fill=key, y=value, x=cluster)) +
+  geom_bar(position="dodge", stat="identity") +labs(y="percent", 
+x="size bin") + 
+  theme(plot.title = element_text(hjust = 0.5))
+p1
 >>>>>>> cc24806cc513399765ac4922473c02895c59a489
 
 #stratified sub-sample
@@ -85,9 +91,22 @@ dat = data.frame(value=c(sample(var.dat$value,size = num.samples,replace = FALSE
                              length (var.unbiased$value))))
 <<<<<<< HEAD
 =======
+p2 <- ggplot(dat, aes(value+.1, fill=group, colour=group)) +
+  stat_ecdf(geom="step") +
+  theme_bw() + 
+  labs(y="ECDF", 
+                  x=paste(parameter[i],"value",sep=""), 
+       title="Comparison of Unbiased Distribution") + 
+  theme(plot.title = element_text(hjust = 0.5)) + scale_x_log10()
+p2
+
+p3 <- ggplot(dat, aes(x=group, y=value+.1, color=group)) + 
+  geom_violin() + theme_bw() + 
+  geom_boxplot(width=0.1) + scale_y_log10()
+p3
+
 >>>>>>> cc24806cc513399765ac4922473c02895c59a489
 
-assign(x = parameter[i],value = dat)
 summary.stats <- tapply(dat$value, dat$group, summary)
 
 summary.table <- data.frame(param = rep(parameter[i],2),
@@ -197,4 +216,24 @@ ggsave(plot = p7,filename = "SoL_graphics/area_histograms.tiff",
        units = "in",
        compression="lzw")
 =======
+plots <- plot_grid(p1,p2,p3,align="h",nrow = 3,ncol = 1)
+save_plot(paste("SoL_graphics/",parameter[i],"_stratified.png",sep=""),
+          plots,base_aspect_ratio = 1.3,nrow=3,ncol=1,
+          base_width = 6)
+}
+
+write_csv(x = summary.output,"SoL_data/unbiased_stats.csv")
+#check the effect of resampling on median estimate
+# sample.median = rep(x = NA,100)
+# 
+# 
+# for(i in 1:1000){
+#   secchi.unbiased = stratified(indt = secchi, #random stratification
+#                                group = "group",
+#                                size = pop.samples,
+#                                replace = TRUE)
+#   sample.median[i] <- median(secchi.unbiased$secchi_med)
+# }
+# boxplot(sample.median)
+# range(sample.median)
 >>>>>>> cc24806cc513399765ac4922473c02895c59a489
