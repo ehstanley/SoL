@@ -2,6 +2,7 @@ library(LAGOSNE)
 library(tidyverse)
 library(lubridate)
 library(splitstackshape)
+library(gridExtra)
 library(cowplot)
 
 #create variable for outputing summary data
@@ -56,11 +57,11 @@ table(var.dat$group)
 #plot biases
 dat.overview = data.frame(cluster=1:16,full=as.vector(full),obs=as.vector(obs))
 dat.overview <- dat.overview %>% gather(key = "key",value = "value",-cluster)
-p1 <- ggplot(dat.overview, aes(fill=key, y=value, x=cluster)) +
-  geom_bar(position="dodge", stat="identity") +labs(y="percent", 
-x="size bin") + 
-  theme(plot.title = element_text(hjust = 0.5))
-p1
+# p1 <- ggplot(dat.overview, aes(fill=key, y=value, x=cluster)) +
+#   geom_bar(position="dodge", stat="identity") +labs(y="percent", 
+# x="size bin") + 
+#   theme(plot.title = element_text(hjust = 0.5))
+# p1
 
 #stratified sub-sample
 num.samples = 1000  #how many total samples to get
@@ -76,21 +77,21 @@ dat = data.frame(value=c(sample(var.dat$value,size = num.samples,replace = FALSE
                  group=rep(c("Observed","Unbiased"), 
                            c(1000,
                              length (var.unbiased$value))))
-p2 <- ggplot(dat, aes(value+.1, fill=group, colour=group)) +
-  stat_ecdf(geom="step") +
-  theme_bw() + 
-  labs(y="ECDF", 
-                  x=paste(parameter[i],"value",sep=""), 
-       title="Comparison of Unbiased Distribution") + 
-  theme(plot.title = element_text(hjust = 0.5)) + scale_x_log10()
-p2
+# # p2 <- ggplot(dat, aes(value+.1, fill=group, colour=group)) +
+#   stat_ecdf(geom="step") +
+#   theme_bw() + 
+#   labs(y="ECDF", 
+#                   x=paste(parameter[i],"value",sep=""), 
+#        title="Comparison of Unbiased Distribution") + 
+#   theme(plot.title = element_text(hjust = 0.5)) + scale_x_log10()
+# p2
 
-p3 <- ggplot(dat, aes(x=group, y=value+.1, color=group)) + 
-  geom_violin() + theme_bw() + 
-  geom_boxplot(width=0.1) + scale_y_log10()
-p3
+# # p3 <- ggplot(dat, aes(x=group, y=value+.1, color=group)) + 
+#   geom_violin() + theme_bw() + 
+#   geom_boxplot(width=0.1) + scale_y_log10()
+# p3
 
-
+assign(x = parameter[i],value = dat)
 summary.stats <- tapply(dat$value, dat$group, summary)
 
 summary.table <- data.frame(param = rep(parameter[i],2),
@@ -107,23 +108,68 @@ if(nrow(summary.output)>=2) {
   summary.output = rbind(summary.output,summary.table)
 } else summary.output = summary.table
 
-plots <- plot_grid(p1,p2,p3,align="h",nrow = 3,ncol = 1)
-save_plot(paste("SoL_graphics/",parameter[i],"_stratified.png",sep=""),
-          plots,base_aspect_ratio = 1.3,nrow=3,ncol=1,
-          base_width = 6)
+# plots <- plot_grid(p1,p2,p3,align="h",nrow = 3,ncol = 1)
+# save_plot(paste("SoL_graphics/",parameter[i],"_stratified.png",sep=""),
+          # plots,base_aspect_ratio = 1.3,nrow=3,ncol=1,
+          # base_width = 6)
 }
 
 write_csv(x = summary.output,"SoL_data/unbiased_stats.csv")
-#check the effect of resampling on median estimate
-# sample.median = rep(x = NA,100)
-# 
-# 
-# for(i in 1:1000){
-#   secchi.unbiased = stratified(indt = secchi, #random stratification
-#                                group = "group",
-#                                size = pop.samples,
-#                                replace = TRUE)
-#   sample.median[i] <- median(secchi.unbiased$secchi_med)
-# }
-# boxplot(sample.median)
-# range(sample.median)
+
+p1 <- ggplot(data = chla_med,aes(value + 0.1, color=group,)) + stat_ecdf(geom="step") +
+  theme_bw() + theme(legend.position = "none") +
+  xlab(bquote(Chla~(mu*g~L^-1))) + ylab("ECDF") + scale_x_log10() +
+  scale_color_manual(breaks=c("Observed","Unbiased"), values = c("grey","black")) +
+  labs(color="Sample Population") +
+  theme(text=element_text(size=10,  family="sans"))
+p1
+p2 <- ggplot(data = tn_calculated_med,aes(value + 0.1, color=group,)) + stat_ecdf(geom="step") +
+  theme_bw() + theme(legend.position = "none") +
+  xlab(bquote(Total~Nitrogen~(mu*g~L^-1))) + ylab("ECDF") + scale_x_log10() +
+  scale_color_manual(breaks=c("Observed","Unbiased"), values = c("grey","black"))  +
+  theme(text=element_text(size=10,  family="sans"))
+p2
+p3 <- ggplot(data = doc_med,aes(value + 0.1, color=group,)) + stat_ecdf(geom="step") +
+  theme_bw() + theme(legend.position = "none") +
+  xlab(bquote(DOC~(mg~L^-1))) + ylab("ECDF") + scale_x_log10() +
+  scale_color_manual(breaks=c("Observed","Unbiased"), values = c("grey","black"))  +
+  theme(text=element_text(size=10,  family="sans"))
+p3
+p4 <- ggplot(chla_med, aes(x=group, y=value+.1, color=group)) +
+  geom_violin() + theme_bw() +
+  geom_boxplot(width=0.1) + scale_y_log10() +
+  theme_bw() + theme(legend.position = "none") +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
+  ylab(bquote(Chla~(mu*g~L^-1))) + xlab("") +
+  scale_color_manual(breaks=c("Observed","Unbiased"), values = c("grey","black")) +
+  theme(text=element_text(size=10,  family="sans"),axis.title=(element_text(size=10)))
+p4
+p5 <- ggplot(tn_calculated_med, aes(x=group, y=value+.1, color=group)) +
+  geom_violin() + theme_bw() +
+  geom_boxplot(width=0.1) + scale_y_log10() +
+  theme_bw() + theme(legend.position = "none") +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
+  ylab(bquote(Total~Nitrogen~(mu*g~L^-1))) + xlab("") +
+  scale_color_manual(breaks=c("Observed","Unbiased"), values = c("grey","black")) +
+  theme(text=element_text(size=10,  family="sans"),axis.title=(element_text(size=10)))
+p5
+p6 <- ggplot(doc_med, aes(x=group, y=value+.1, color=group)) +
+  geom_violin() + theme_bw() +
+  geom_boxplot(width=0.1) + scale_y_log10() +
+  theme_bw() + theme(legend.position = "none") +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
+  ylab(bquote(DOC~(mg~L^-1))) + xlab("") +
+  scale_color_manual(breaks=c("Observed","Unbiased"), values = c("grey","black")) +
+  theme(text=element_text(size=10,  family="sans"),axis.title=(element_text(size=10)))
+p6
+
+plots <- grid.arrange(p1,p2,p3,p4,p5,p6,ncol=3)
+# plots <- plot_grid(p1,p2,p3,p4,p5,p6, align = "v",nrow = 2)
+plots
+ggsave(plot = plots,filename = "SoL_graphics/unbiased_distributions.tiff",
+       device = "tiff",
+       width = 7.5,
+       height = 5,
+       dpi = 300,
+       units = "in",
+       compression="lzw")
