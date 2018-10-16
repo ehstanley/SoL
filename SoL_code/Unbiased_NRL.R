@@ -2,7 +2,6 @@ library(LAGOSNE)
 library(tidyverse)
 library(lubridate)
 library(splitstackshape)
-library(gridExtra)
 library(cowplot)
 
 #create variable for outputing summary data
@@ -59,6 +58,7 @@ table(var.dat$group)
 #data for area plot biases
 param = parameter[i]
 dat.overview = data.frame(cluster=1:16,full=as.vector(full),obs=as.vector(obs))
+<<<<<<< HEAD
 dat.overview <- dat.overview %>% 
   gather(key = "key",value = "value",-cluster) %>% 
   mutate(variable = as.character(param)) %>% 
@@ -66,6 +66,8 @@ dat.overview <- dat.overview %>%
 
   dat.full <- rbind(dat.full,dat.overview)
 
+=======
+>>>>>>> cc24806cc513399765ac4922473c02895c59a489
 
 #stratified sub-sample
 num.samples = 1000  #how many total samples to get
@@ -81,6 +83,9 @@ dat = data.frame(value=c(sample(var.dat$value,size = num.samples,replace = FALSE
                  group=rep(c("Observed","Unbiased"), 
                            c(1000,
                              length (var.unbiased$value))))
+<<<<<<< HEAD
+=======
+>>>>>>> cc24806cc513399765ac4922473c02895c59a489
 
 assign(x = parameter[i],value = dat)
 summary.stats <- tapply(dat$value, dat$group, summary)
@@ -99,6 +104,7 @@ if(nrow(summary.output)>=2) {
   summary.output = rbind(summary.output,summary.table)
 } else summary.output = summary.table
 
+<<<<<<< HEAD
 }
 
 write_csv(x = summary.output,"SoL_data/unbiased_stats.csv")
@@ -190,3 +196,5 @@ ggsave(plot = p7,filename = "SoL_graphics/area_histograms.tiff",
        dpi = 300,
        units = "in",
        compression="lzw")
+=======
+>>>>>>> cc24806cc513399765ac4922473c02895c59a489
