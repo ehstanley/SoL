@@ -3,6 +3,8 @@ cat("\14")
 
 library(dplyr)
 library(maps)
+library(tidyverse)
+library(data.table)
 
 sol <-readRDS("SoL_data/SoL_data.rds")  #desktop
 
@@ -534,14 +536,35 @@ jday_long <- mutate(jday_long, variable = recode(variable, secchi = 'Secchi',
                                                  no2no3 = 'NO3',
                                                  color = 'Color', 
                                                  doc = 'DOC'))
+jday_long <- jday_long %>% mutate(y_max=NA) %>% 
+  mutate(y_max = replace(y_max,variable_type=="Trophic",values = 6000)) %>% 
+  mutate(y_max = replace(y_max,variable_type=="Nitrogen",values = 600)) %>%
+  mutate(y_max = replace(y_max,variable_type=="Carbon",values = 400))
+
 p <- ggplot(jday_long, aes(x = Yr.day, y = nobs)) +
   geom_line(aes(color = variable, group = variable)) +
   facet_wrap(~variable_type, ncol = 1, scales = 'free_y') +
   theme_bw() +
   theme(panel.grid = element_blank(), strip.background = element_blank()) +
   labs(x = 'Day of the Year', y = 'Data Count', color = 'Parameter') +
-  scale_color_manual(values =  c("red", "green", "blue", "black", "gray", "cyan", "orange", "brown")) +
-  geom_vline(xintercept = c(166, 258), linetype = 3)
+  scale_color_manual(values =  c("darkblue", 
+                                 "dodgerblue2", 
+                                 "lightskyblue1", 
+                                 "darkorchid4", 
+                                 "orchid1", 
+                                 "darkorchid2", 
+                                 "tan4", 
+                                 "tan2")) +
+  geom_vline(xintercept = c(166, 258), linetype = 3) +
+  geom_blank(aes(y = y_max)) + 
+  theme(text=element_text(size=10,  family="sans"))
+p
 
-ggsave('SoL_graphics/doy_vertical.png', height = 6, width = 5)  
-  
+ggsave(filename = "SoL_graphics/doy_vertical.tiff",
+       plot = p,
+       device = "tiff",
+       width = 4.5,
+       height = 5,
+       dpi = 300,
+       units = "in",
+       compression="lzw")
