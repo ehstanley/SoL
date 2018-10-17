@@ -4,7 +4,7 @@ cat("\14")
 library(dplyr)
 library(maps)
 library(tidyverse)
-library(data.table)
+library(gridExtra)
 
 sol <-readRDS("SoL_data/SoL_data.rds")  #desktop
 
@@ -541,12 +541,13 @@ jday_long <- jday_long %>% mutate(y_max=NA) %>%
   mutate(y_max = replace(y_max,variable_type=="Nitrogen",values = 600)) %>%
   mutate(y_max = replace(y_max,variable_type=="Carbon",values = 400))
 
-p <- ggplot(jday_long, aes(x = Yr.day, y = nobs)) +
+dat.split <- split(jday_long,f=jday_long$variable_type)
+p1 <- ggplot(dat.split$Trophic, aes(x = Yr.day, y = nobs)) +
   geom_line(aes(color = variable, group = variable)) +
   facet_wrap(~variable_type, ncol = 1, scales = 'free_y') +
   theme_bw() +
   theme(panel.grid = element_blank(), strip.background = element_blank()) +
-  labs(x = 'Day of the Year', y = 'Data Count', color = 'Parameter') +
+  labs(x = '', y = '', color = '') +
   scale_color_manual(values =  c("darkblue", 
                                  "dodgerblue2", 
                                  "lightskyblue1", 
@@ -557,13 +558,61 @@ p <- ggplot(jday_long, aes(x = Yr.day, y = nobs)) +
                                  "tan2")) +
   geom_vline(xintercept = c(166, 258), linetype = 3) +
   geom_blank(aes(y = y_max)) + 
-  theme(text=element_text(size=10,  family="sans"))
-p
+  theme(text=element_text(size=10,  family="sans")) + 
+  theme(legend.position = c(0.12, 0.8),
+        legend.background=element_blank(),
+        legend.key=element_blank()) + 
+  theme(axis.title.x=element_blank(),
+        axis.text.x=element_blank(),
+        axis.ticks.x=element_blank()) +
+  theme(plot.margin = unit(c(0, .2, .2, .2), "cm"))
+p1
+p2 <- ggplot(dat.split$Nitrogen, aes(x = Yr.day, y = nobs)) +
+  geom_line(aes(color = variable, group = variable)) +
+  facet_wrap(~variable_type, ncol = 1, scales = 'free_y') +
+  theme_bw() +
+  theme(panel.grid = element_blank(), strip.background = element_blank()) +
+  labs(x = '', y = 'Data Count', color = '') +
+  scale_color_manual(values =  c("darkorchid4", 
+                                 "orchid1", 
+                                 "darkorchid2", 
+                                 "tan4", 
+                                 "tan2")) +
+  geom_vline(xintercept = c(166, 258), linetype = 3) +
+  geom_blank(aes(y = y_max)) + 
+  theme(text=element_text(size=10,  family="sans")) + 
+  theme(legend.position = c(0.12, 0.8),
+        legend.background=element_blank(),
+        legend.key=element_blank()) +
+  theme(axis.title.x=element_blank(),
+        axis.text.x=element_blank(),
+        axis.ticks.x=element_blank()) +
+  theme(plot.margin = unit(c(0, .2, .2, .2), "cm"))
+p2
+p3 <- ggplot(dat.split$Carbon, aes(x = Yr.day, y = nobs)) +
+  geom_line(aes(color = variable, group = variable)) +
+  facet_wrap(~variable_type, ncol = 1, scales = 'free_y') +
+  theme_bw() +
+  theme(panel.grid = element_blank(), strip.background = element_blank()) +
+  labs(x = 'Day of the year', y = '', color = '') +
+  scale_color_manual(values =  c("tan4", 
+                                 "tan2")) +
+  geom_vline(xintercept = c(166, 258), linetype = 3) +
+  geom_blank(aes(y = y_max)) + 
+  theme(text=element_text(size=10,  family="sans")) + 
+  theme(legend.position = c(0.12, 0.89),
+        legend.background=element_blank(),
+        legend.key=element_blank()) +
+  theme(plot.margin = unit(c(0, .2, .1, .2), "cm"))
+p3
 
+# p.out <- grid.arrange(p1,p2,p3,heights=c(1,1,1),ncol=1)
+p.out <- plot_grid(p1,p2,p3,ncol=1,align = "hv")
+p.out <- ggarrange(p1,p2,p3,ncol=1) #egg package
 ggsave(filename = "SoL_graphics/doy_vertical.tiff",
-       plot = p,
+       plot = p.out,
        device = "tiff",
-       width = 4.5,
+       width = 3.5,
        height = 5,
        dpi = 300,
        units = "in",
