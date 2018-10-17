@@ -1,7 +1,7 @@
-setwd("C:/Users/Nobody/Documents/LocalR/SoL/SoL_data")
+
 library(dplyr)
-lakes = readRDS("lakes.rds")
-sol = readRDS("SoL_data.rds")
+sol <-readRDS("SoL_data/SoL_data.rds")
+lakes = readRDS("SoL_data/lakes.rds")
 
 #marking lagoslakeid's that have data (dat column = 1 in sol- df that contains the chem data)
 sol$dat = 1
@@ -21,22 +21,62 @@ barplot(type.sol)
 type.all2 = c(12361, 42792, 21205, 64907)
 type.sol2 = c(3973, 4737, 2416, 3105)
 types = data.frame(cbind(type.all2, type.sol2))
-types$allpct = types$type.all2/141265
-types$solpct = types$type.sol2/14231
+types$allpct = (types$type.all2/141265)*100
+types$solpct = (types$type.sol2/14231)*100
 
-par(mfrow=c(1,3))
-par(mar = c(5, 4, 2, 1))
-barplot(types$allpct, axis.lty=1, col= "darkblue", ylab = "Percent of lakes", cex.names = 0.5, 
-        ylim = c(0, 0.5), main = "All lakes")
-axis(side = 1, at = c(0:5), labels = c("", "DR_LS", "DR_S", "HW", "ISO", ""), cex.axis= 0.75)
-barplot(types$solpct, axis.lty=1, col = "lightblue", cex.names = 0.5,
-        ylim = c(0,0.5), main = "Lakes with data")
-axis(side = 1, at = c(1:4), labels = c("DR_LS", "DR_S", "HW", "ISO"), cex.axis= 0.75)
 
-area = aggregate(L2$lake_area_ha, by = list(L2$lakeconnection), FUN = mean)
-area <- rename(area, Group = Group.1, Area = x)
-barplot(area$Area, ylab= "Hectares", main = "Avg Lake Area")
-axis(side = 1, at = c(1:4), labels = c("DR_LS", "DR_S", "HW", "ISO"), cex.axis= 0.75)
+
+tiff(filename = "SoL_graphics/fig_S3.tiff",
+     width = 3.5,
+     height = 2,
+     units = "in",res = 300,
+     pointsize = 10,
+     family="sans",
+     compression = "lzw")
+
+par(mfrow = c(1,2),
+    oma = c(0,0,0,0),
+    mar=c(2.4,3.5,.5,.5))
+
+#par(mfrow=c(1,2))
+#par(mar = c(5, 4, 2, 1))
+barplot(types$allpct, axis.lty=1, col= "grey", xlab= "", ylab = "", xaxt="n", yaxt="n", ylim = c(0, 50))
+axis(1, label = FALSE, tck = -0.015)
+axis(2, label = FALSE, tck = -0.015)
+axis(side = 1, at = c(1:4), labels = FALSE)
+labs <- c("DR-LS", "DR-S", "HW", "ISO")
+text(seq(1, 4, by=1), par("usr")[3] - 0.8, labels = labs, cex = 0.6, srt = 45, pos = 1, xpd = TRUE)
+#axis(1, line = -0.7, lwd = 0, cex.axis = 0.9)
+axis(2, line = -.4, lwd = 0, cex.axis = 0.9, las=1)
+mtext(side=2, "Percent of lakes", cex= 1.2, line = 2.3)
+#axis(side = 1, at = c(0:5), labels = c("", "DR_LS", "DR_S", "HW", "ISO", ""), cex.axis= 0.75)
+
+barplot(types$solpct, axis.lty=1, col = "grey", xlab= "", ylab = "", xaxt="n", yaxt="n",
+        ylim = c(0,50))
+axis(1, label = FALSE, tck = -0.015)
+axis(2, label = FALSE, tck = -0.015)
+axis(side = 1, at = c(1:4), labels = FALSE)
+labs <- c("DR-LS", "DR-S", "HW", "ISO")
+text(seq(1, 4, by=1), par("usr")[3] - 0.8, labels = labs, cex = 0.6, srt = 45, pos = 1, xpd = TRUE)
+axis(2, line = -.4, lwd = 0, cex.axis = 0.9, las=1)
+#mtext(side=1,"Hydrologic categorgy", line=1.2)
+dev.off()
+
+
+## add the labels
+#axis(1, line = -0.7, lwd = 0, cex.axis = 0.9)
+#axis(2, line = -.4, lwd = 0, cex.axis = 0.9, las=1)
+#mtext(side=1,"Hydrologic categorgy", line=1.2)
+#adjust the line value to move the y axis label in and out
+#based on how many digits are in the y ticks
+#mtext(side=2, "", line = 2.3)
+
+
+
+#area = aggregate(L2$lake_area_ha, by = list(L2$lakeconnection), FUN = mean)
+#area <- rename(area, Group = Group.1, Area = x)
+#barplot(area$Area, ylab= "Hectares", main = "Avg Lake Area")
+#axis(side = 1, at = c(1:4), labels = c("DR_LS", "DR_S", "HW", "ISO"), cex.axis= 0.75)
 
 
 par(mfrow= c(1,3))
