@@ -58,7 +58,6 @@ table(var.dat$group)
 #data for area plot biases
 param = parameter[i]
 dat.overview = data.frame(cluster=1:16,full=as.vector(full),obs=as.vector(obs))
-<<<<<<< HEAD
 dat.overview <- dat.overview %>% 
   gather(key = "key",value = "value",-cluster) %>% 
   mutate(variable = as.character(param)) %>% 
@@ -127,20 +126,20 @@ write_csv(x = summary.output,"SoL_data/unbiased_stats.csv")
 p1 <- ggplot(data = chla_med,aes(value + 0.1, color=group,)) + stat_ecdf(geom="step") +
   theme_bw() + theme(legend.position = "none") +
   xlab(bquote(Chla~(mu*g~L^-1))) + ylab("ECDF") + scale_x_log10() +
-  scale_color_manual(breaks=c("Observed","Unbiased"), values = c("grey","black")) +
+  scale_color_manual(breaks=c("Observed","Corrected"), values = c("grey","black")) +
   labs(color="Sample Population") +
   theme(text=element_text(size=10,  family="sans"))
 p1
 p2 <- ggplot(data = tn_calculated_med,aes(value + 0.1, color=group,)) + stat_ecdf(geom="step") +
   theme_bw() + theme(legend.position = "none") +
   xlab(bquote(Total~Nitrogen~(mu*g~L^-1))) + ylab("ECDF") + scale_x_log10() +
-  scale_color_manual(breaks=c("Observed","Unbiased"), values = c("grey","black"))  +
+  scale_color_manual(breaks=c("Observed","Corrected"), values = c("grey","black"))  +
   theme(text=element_text(size=10,  family="sans"))
 p2
 p3 <- ggplot(data = doc_med,aes(value + 0.1, color=group,)) + stat_ecdf(geom="step") +
   theme_bw() + theme(legend.position = "none") +
   xlab(bquote(DOC~(mg~L^-1))) + ylab("ECDF") + scale_x_log10() +
-  scale_color_manual(breaks=c("Observed","Unbiased"), values = c("grey","black"))  +
+  scale_color_manual(breaks=c("Observed","Corrected"), values = c("grey","black"))  +
   theme(text=element_text(size=10,  family="sans"))
 p3
 p4 <- ggplot(chla_med, aes(x=group, y=value+.1, color=group)) +
@@ -149,7 +148,7 @@ p4 <- ggplot(chla_med, aes(x=group, y=value+.1, color=group)) +
   theme_bw() + theme(legend.position = "none") +
   theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
   ylab(bquote(Chla~(mu*g~L^-1))) + xlab("") +
-  scale_color_manual(breaks=c("Observed","Unbiased"), values = c("grey","black")) +
+  scale_color_manual(breaks=c("Observed","Corrected"), values = c("grey","black")) +
   theme(text=element_text(size=10,  family="sans"),axis.title=(element_text(size=10)))
 p4
 p5 <- ggplot(tn_calculated_med, aes(x=group, y=value+.1, color=group)) +
@@ -158,7 +157,7 @@ p5 <- ggplot(tn_calculated_med, aes(x=group, y=value+.1, color=group)) +
   theme_bw() + theme(legend.position = "none") +
   theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
   ylab(bquote(Total~Nitrogen~(mu*g~L^-1))) + xlab("") +
-  scale_color_manual(breaks=c("Observed","Unbiased"), values = c("grey","black")) +
+  scale_color_manual(breaks=c("Observed","Corrected"), values = c("grey","black")) +
   theme(text=element_text(size=10,  family="sans"),axis.title=(element_text(size=10)))
 p5
 p6 <- ggplot(doc_med, aes(x=group, y=value+.1, color=group)) +
@@ -167,7 +166,7 @@ p6 <- ggplot(doc_med, aes(x=group, y=value+.1, color=group)) +
   theme_bw() + theme(legend.position = "none") +
   theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
   ylab(bquote(DOC~(mg~L^-1))) + xlab("") +
-  scale_color_manual(breaks=c("Observed","Unbiased"), values = c("grey","black")) +
+  scale_color_manual(breaks=c("Observed","Corrected"), values = c("grey","black")) +
   theme(text=element_text(size=10,  family="sans"),axis.title=(element_text(size=10)))
 p6
 
