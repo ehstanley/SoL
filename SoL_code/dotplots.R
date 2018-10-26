@@ -122,7 +122,7 @@ add.alpha <- function(col, alpha=0.8){
           rgb(x[1], x[2], x[3], alpha=alpha))  
 }
 my.cols <- add.alpha(my.cols)
-
+dot_size <-2.5
 
 ###### morphology ######
 {tiff(filename = "SoL_graphics/dotplots.tiff",
@@ -137,36 +137,36 @@ par(mfrow=c(1,3), oma = c(1.5,5.5,2,.5),mar=c(2,5,0,0),cex.axis=1)
 # n lakes in a state divided by n lakes in sample or population
 # e.g., for TP, n lakes in MN with TP divided by n lakes with TP
 #Trophic Variables
-dotchart2(pop_summ$prop_count, labels = pop_summ$state_name,dotsize = 2, xlab = "", 
+dotchart2(pop_summ$prop_count, labels = pop_summ$state_name,dotsize = dot_size, xlab = "", 
           xlim = c(-0.02, 0.4), bty= "L", width.factor = .2, col = add.alpha('black', 0.7),
           cex.labels = 0.7)
-dotchart2(secchi_summ$prop_count,  dotsize = 2, add = TRUE, col = my.cols[1])
-dotchart2(tp_summ$prop_count,  dotsize = 2, add = TRUE, col = my.cols[2])
-dotchart2(chl_summ$prop_count,  dotsize = 2, add = TRUE, col = my.cols[3])
+dotchart2(secchi_summ$prop_count,  dotsize = dot_size, add = TRUE, col = my.cols[1])
+dotchart2(tp_summ$prop_count,  dotsize = dot_size, add = TRUE, col = my.cols[2])
+dotchart2(chl_summ$prop_count,  dotsize = dot_size, add = TRUE, col = my.cols[3])
 box(lwd=1)
 
 #Nitrogen Variables
 dotchart2(pop_summ$prop_count, labels = "",
-          dotsize = 2, 
+          dotsize = dot_size, 
           xlab = "", 
           xlim = c(-.02, 0.4), 
           bty= "L", width.factor = .2, 
           col = add.alpha('black', 0.7))
-dotchart2(tn_summ$prop_count,  dotsize = 2, add = TRUE, col = my.cols[4])
-dotchart2(no3_summ$prop_count,  dotsize = 2, add = TRUE, col = my.cols[5])
-dotchart2(nh4_summ$prop_count,  dotsize = 2, add = TRUE, col = my.cols[6])
+dotchart2(tn_summ$prop_count,  dotsize = dot_size, add = TRUE, col = my.cols[4])
+dotchart2(no3_summ$prop_count,  dotsize = dot_size, add = TRUE, col = my.cols[5])
+dotchart2(nh4_summ$prop_count,  dotsize = dot_size, add = TRUE, col = my.cols[6])
 box(lwd=1)
 mtext(side=1,text = "Proportion of lakes in sample or population",line=2.2)
 
 #carbon
 dotchart2(pop_summ$prop_count, labels = "",
-          dotsize = 2, 
+          dotsize = dot_size, 
           xlab = "", 
           xlim = c(-.02, 0.4), 
           bty= "L", width.factor = .2, 
           col = add.alpha('black', 0.7))
-dotchart2(doc_summ$prop_count,  dotsize = 2, add = TRUE, col = my.cols[7])
-dotchart2(color_summ$prop_count,  dotsize = 2, add = TRUE, col = my.cols[8])
+dotchart2(doc_summ$prop_count,  dotsize = dot_size, add = TRUE, col = my.cols[7])
+dotchart2(color_summ$prop_count,  dotsize = dot_size, add = TRUE, col = my.cols[8])
 box(lwd=1)
 
 par(fig = c(0, 1, 0, 1), oma = c(0, 0, 0, 0), mar = c(0, 0, 0, 0), new = TRUE)
@@ -174,17 +174,33 @@ plot(0, 0, type = "n", bty = "n", xaxt = "n", yaxt = "n")
 legend(-1.08,1.1, legend = c("Population", "Secchi", "TP","Chl", 
                             "TN","NO3", "NH4",
                             "DOC", "Color"), 
-       pch = 16, pt.cex = 1, bty = "n", col = c("black", my.cols), cex =1, horiz = TRUE)
+       pch = 16, pt.cex = 1.5, bty = "n", col = c("black", my.cols), cex =1, horiz = TRUE)
 
 dev.off()}
 # lake area
-dotchart2(log10(pop_summ$lake_area_ha), labels = pop_summ$state_name,dotsize = 2, xlab = "Area (ha)", 
-          bty= "L", width.factor = .2, col = add.alpha('black', 0.7), xlim = c(0.9, 4.1),
-          axisat = c(0:4), axislabels = c('1', '10', '100', '1000', '10000'))
-dotchart2(log10(tn_summ$lake_area_ha),  dotsize = 1, add = TRUE, col = my.cols[1])
-dotchart2(log10(tp_summ$lake_area_ha),  dotsize = 2, add = TRUE, col = my.cols[2])
-dotchart2(log10(chl_summ$lake_area_ha),  dotsize = 1, add = TRUE, col = my.cols[3])
-dotchart2(log10(doc_summ$lake_area_ha),  dotsize = 1, add = TRUE, col = my.cols[4])
+tiff(filename = "SoL_graphics/dotplots_area.tiff",
+     width = 3.5,
+     height = 3.5,
+     units = "in",res = 300,
+     pointsize = 10,
+     family="sans",
+     compression = "lzw")
+par(mfrow=c(1,1), oma = c(1.5,5.5,2,.5),mar=c(2,5,0,0),cex.axis=1)
+dotchart2(log10(pop_summ$lake_area_ha), labels = pop_summ$state_name,dotsize = 1.5, xlab = "", 
+          xlim = c(0.9, 4.1), bty= "L", width.factor = .2, col = add.alpha('black', 0.7),
+          cex.labels = 0.7,axisat = c(0:4), axislabels = c('1', '10', '100', '1000', '10000'))
+dotchart2(log10(chl_summ$lake_area_ha),  dotsize = 1.5, add = TRUE, col = my.cols[2])
+dotchart2(log10(tn_summ$lake_area_ha),  dotsize = 1.5, add = TRUE, col = my.cols[4])
+dotchart2(log10(doc_summ$lake_area_ha),  dotsize = 1.5, add = TRUE, col = my.cols[7])
+box(lwd=1)
+mtext(side=1,text = "Area (ha)",line=2.2)
+par(fig = c(0, 1, 0, 1), oma = c(0, 0, 0, 0), mar = c(0, 0, 0, 0), new = TRUE)
+plot(0, 0, type = "n", bty = "n", xaxt = "n", yaxt = "n")
+legend(-1.,1.1, legend = c("Population", "Chl", 
+                             "TN",
+                             "DOC"), 
+       pch = 16, pt.cex = 1.3, bty = "n", col = c("black", my.cols[c(2,4,7)]), cex =1, horiz = TRUE)
+dev.off()
 
 # residence time proxy or WSA/LA
 dotchart2(pop_summ$res_time_proxy, labels = "", xlab = "WSA:LA", dotsize = 2, xlim = c(0, 150), 
