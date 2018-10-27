@@ -3,6 +3,7 @@ library(tidyverse)
 library(lubridate)
 library(splitstackshape)
 library(cowplot)
+library(gridExtra)
 
 #create variable for outputing summary data
 summary.output = data.frame(temp=NA)
@@ -83,7 +84,7 @@ var.unbiased = stratified(indt = var.dat, #random stratification
                           replace = TRUE)
 dat = data.frame(value=c(sample(var.dat$value,size = num.samples,replace = FALSE),
                          var.unbiased$value), 
-                 group=rep(c("Observed","Unbiased"), 
+                 group=rep(c("Observed","Corrected"), 
                            c(1000,
                              length (var.unbiased$value))))
 
@@ -117,6 +118,7 @@ if(nrow(summary.output)>=2) {
   summary.output = rbind(summary.output,summary.table)
 } else summary.output = summary.table
 
+assign(x = parameter[i],value = dat)
 }
 
 write_csv(x = summary.output,"SoL_data/unbiased_stats.csv")
@@ -142,7 +144,7 @@ p3 <- ggplot(data = doc_med,aes(value + 0.1, color=group,)) + stat_ecdf(geom="st
   scale_color_manual(breaks=c("Observed","Corrected"), values = c("grey","black"))  +
   theme(text=element_text(size=10,  family="sans"))
 p3
-p4 <- ggplot(chla_med, aes(x=group, y=value+.1, color=group)) +
+p4 <- ggplot(chla_med, aes(x=reorder(group,desc(group)), y=value+.1, color=group)) +
   geom_violin() + theme_bw() +
   geom_boxplot(width=0.1) + scale_y_log10() +
   theme_bw() + theme(legend.position = "none") +
@@ -151,7 +153,7 @@ p4 <- ggplot(chla_med, aes(x=group, y=value+.1, color=group)) +
   scale_color_manual(breaks=c("Observed","Corrected"), values = c("grey","black")) +
   theme(text=element_text(size=10,  family="sans"),axis.title=(element_text(size=10)))
 p4
-p5 <- ggplot(tn_calculated_med, aes(x=group, y=value+.1, color=group)) +
+p5 <- ggplot(tn_combined_med, aes(x=reorder(group,desc(group)), y=value+.1, color=group)) +
   geom_violin() + theme_bw() +
   geom_boxplot(width=0.1) + scale_y_log10() +
   theme_bw() + theme(legend.position = "none") +
@@ -160,7 +162,7 @@ p5 <- ggplot(tn_calculated_med, aes(x=group, y=value+.1, color=group)) +
   scale_color_manual(breaks=c("Observed","Corrected"), values = c("grey","black")) +
   theme(text=element_text(size=10,  family="sans"),axis.title=(element_text(size=10)))
 p5
-p6 <- ggplot(doc_med, aes(x=group, y=value+.1, color=group)) +
+p6 <- ggplot(doc_med, aes(x=reorder(group,desc(group)), y=value+.1, color=group)) +
   geom_violin() + theme_bw() +
   geom_boxplot(width=0.1) + scale_y_log10() +
   theme_bw() + theme(legend.position = "none") +
