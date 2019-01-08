@@ -146,6 +146,7 @@ srp2$fraction <- (srp2$sum/11229)
 srp2$lake.number <- c(1:1566)
 srp2$pct <- srp2$lake.number/1566
 
+#Grey Scale one panel
  tiff(filename = "SoL_graphics/cum_freq.tiff",
      width = 3.5,
      height = 3.5,
@@ -166,9 +167,9 @@ box(lwd=1)
 #c_chl = rgb(43, 140, 190, max=255, alpha=255)
 lines(chl2$pct, chl2$fraction,
      xlab="",ylab="",
-     xaxt="n",yaxt="n",col="dodgerblue2",
+     xaxt="n",yaxt="n",col="darkgrey",
      xlim=c(0,1),ylim=c(0,1),
-     type="l",lwd=2.5)
+     type="l",lwd=2.5,lty=1)
 ## add axis ticks
 axis(1, label = FALSE, tck = -0.015)
 axis(2, label = FALSE, tck = -0.015)
@@ -180,12 +181,91 @@ mtext(side=1,"Fraction of lakes", line=1.2)
 #based on how many digits are in the y ticks
 mtext(side=2, "Fraction of data", line = 1.9)
 #c_tn = rgb(247,104, 161, max=255, alpha=255)
-lines(n2$pct, n2$fraction,col="darkorchid4",lwd=2.5)
+lines(n2$pct, n2$fraction,col="darkgrey",lwd=2.5,lty=2)
 #c_doc = rgb(140, 81, 10, max=255, alpha=255)
-lines(doc2$pct, doc2$fraction,col="tan2",lwd=2.5)
+lines(doc2$pct, doc2$fraction,col="darkgrey",lwd=2.5,lty=3)
 legend("topleft", legend = c("Chl", "TN", "DOC"), 
-       lty=1, col = c("dodgerblue2", "darkorchid4", "tan2"),bty="n",lwd=2)
+       col = c("darkgrey", "darkgrey", "darkgrey"),bty="n",lwd=2,lty=c(1,2,3))
 dev.off()
+
+
+
+#Color 3 panel
+tiff(filename = "SoL_graphics/cum_freq_3panel.tiff",
+     width = 6.5,
+     height = 2,
+     units = "in",res = 300,
+     pointsize = 10,
+     family="sans",
+     compression = "lzw")
+par(mfrow = c(1,3),
+    oma = c(0,0,0,0),
+    mar=c(2.4,3.5,.5,.5),
+    pty="s")
+plot.new( )
+plot.window( xlim=c(0,1), ylim=c(0,1) )
+grid()
+box(lwd=1)
+lines(s2$pct, s2$fraction,
+      xlab="",ylab="",
+      xaxt="n",yaxt="n",col="darkblue",
+      xlim=c(0,1),ylim=c(0,1),
+      type="l",lwd=2.5,lty=1)
+axis(1, label = FALSE, tck = -0.015)
+axis(2, label = FALSE, tck = -0.015)
+axis(1, line = -0.7, lwd = 0, cex.axis = 0.7)
+axis(2, line = -.4, lwd =0, cex.axis = 0.7, las=1)
+mtext(side=2, "Fraction of data", line = 1.9,cex=.8)
+lines(chl2$pct, chl2$fraction,col="dodgerblue2",lwd=2.5,lty=1)
+lines(p2$pct, p2$fraction,col="lightskyblue1",lwd=2.5,lty=1)
+legend("topleft", legend = c("Secchi", "Chl", "TP"), 
+       col = c("darkblue", "dodgerblue2", "lightskyblue1"),bty="n",lwd=2,lty=1)
+
+plot.new( )
+plot.window( xlim=c(0,1), ylim=c(0,1) )
+grid()
+box(lwd=1)
+lines(n2$pct, n2$fraction,
+      xlab="",ylab="",
+      xaxt="n",yaxt="n",col="darkorchid4",
+      xlim=c(0,1),ylim=c(0,1),
+      type="l",lwd=2.5,lty=1)
+axis(1, label = FALSE, tck = -0.015)
+axis(2, label = FALSE, tck = -0.015)
+axis(1, line = -0.7, lwd = 0, cex.axis = 0.7)
+axis(2, line = -.4, lwd =0, cex.axis = 0.7, las=1)
+mtext(side=1,"Fraction of lakes", line=1.2,cex=.8)
+lines(nh4.2$pct, nh4.2$fraction,col="darkorchid2",lwd=2.5,lty=1)
+lines(no3.2$pct, no3.2$fraction,col="orchid1",lwd=2.5,lty=1)
+legend("topleft", legend = c("TN", "NH4", "NO3"), 
+       col = c("darkorchid4", "darkorchid2", "orchid1"),bty="n",lwd=2,lty=1)
+
+plot.new( )
+plot.window( xlim=c(0,1), ylim=c(0,1) )
+grid()
+box(lwd=1)
+lines(color2$pct, color2$fraction,
+      xlab="",ylab="",
+      xaxt="n",yaxt="n",col="tan4",
+      xlim=c(0,1),ylim=c(0,1),
+      type="l",lwd=2.5,lty=1)
+axis(1, label = FALSE, tck = -0.015)
+axis(2, label = FALSE, tck = -0.015)
+axis(1, line = -0.7, lwd = 0, cex.axis = 0.7)
+axis(2, line = -.4, lwd =0, cex.axis = 0.7, las=1)
+lines(doc2$pct, doc2$fraction,col="tan2",lwd=2.5,lty=1)
+legend("topleft", legend = c("Color", "DOC"), 
+       col = c("tan4", "tan2"),bty="n",lwd=2,lty=1)
+dev.off()
+
+
+
+
+
+
+
+
+
 
 
 plot(chl2$pct, chl2$fraction, cex.lab = 1.5, xlab = "Fraction of lakes", ylab = "Fraction of data", 
