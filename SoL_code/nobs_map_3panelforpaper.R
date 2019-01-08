@@ -11,7 +11,7 @@ cordsids<-unique(lakes[,c("lagoslakeid", "nhd_lat", "nhd_long")])
 
 
 
-pdf("SoL_graphics/nobsmaps/3pchltndoc.pdf", width=3.5, height=7)
+pdf("SoL_graphics/FinalFigures/3pchltndoc.pdf", width=3.5, height=7)
 par(mfrow=c(3,1), xpd=NA)
   
   data.var<- na.omit(data[,c("lagoslakeid", "chla", "year")])
@@ -29,8 +29,8 @@ par(mfrow=c(3,1), xpd=NA)
                                     "New Jersey", "Connecticut","Rhode Island","Massachusetts",
                                     "Vermont", "New Hampshire","Maine"), fill = TRUE, col="white", fg="grey30", lwd=1,mar=c(0,0,1,0),oma=c(0,0,0,0))
   points(undertwenty$nhd_long, undertwenty$nhd_lat, pch=21, col="grey70", lwd=.5, bg=rgb(211,211,211, 200,max=255), cex=.8)
-  points(twentyplus$nhd_long, twentyplus$nhd_lat, pch=19, lwd=.5, col=rgb(34,94,168, 200,max=255), cex=.8)
-  
+  points(twentyplus$nhd_long, twentyplus$nhd_lat, pch=19, lwd=.5, col="black", cex=.8)
+ 
   text(-97, 49.5, "a) Chlorophyll a", adj=c(0,0), cex=1.3)
   
   data.var<- na.omit(data[,c("lagoslakeid", "tn_combined", "year")])
@@ -48,7 +48,7 @@ par(mfrow=c(3,1), xpd=NA)
                                     "New Jersey", "Connecticut","Rhode Island","Massachusetts",
                                     "Vermont", "New Hampshire","Maine"), fill = TRUE, col="white", fg="grey30", lwd=1,mar=c(0,0,1,0),oma=c(0,0,0,0))
   points(undertwenty$nhd_long, undertwenty$nhd_lat, pch=21, col="grey70", lwd=.5, bg=rgb(211,211,211, 200,max=255), cex=.8)
-  points(twentyplus$nhd_long, twentyplus$nhd_lat, pch=19, lwd=.5, col=rgb(34,94,168, 200,max=255), cex=.8)
+  points(twentyplus$nhd_long, twentyplus$nhd_lat, pch=19, lwd=.5, col="black", cex=.8)
   text(-97, 49.5, "b) Total Nitrogen", adj=c(0,0), cex=1.3)
   
   #legend(-84, 51, legend=c("Lakes with data", "Lakes with 20+ years of data"),
@@ -70,7 +70,7 @@ par(mfrow=c(3,1), xpd=NA)
                                     "New Jersey", "Connecticut","Rhode Island","Massachusetts",
                                     "Vermont", "New Hampshire","Maine"), fill = TRUE, col="white", fg="grey30", lwd=1,mar=c(0,0,1,0),oma=c(0,0,0,0))
   points(undertwenty$nhd_long, undertwenty$nhd_lat, pch=21, col="grey70", lwd=.5, bg=rgb(211,211,211, 200,max=255), cex=.8)
-  points(twentyplus$nhd_long, twentyplus$nhd_lat, pch=19, lwd=.5, col=rgb(34,94,168, 200,max=255), cex=.8)
+  points(twentyplus$nhd_long, twentyplus$nhd_lat, pch=19, lwd=.5, col="black", cex=.8)
   text(-97, 49.5, "c) Dissolved Organic Carbon", adj=c(0,0), cex=1.3)
   
   par(mar=c(0,0,0,0), xpd=NA)
