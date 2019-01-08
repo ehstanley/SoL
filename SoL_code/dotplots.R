@@ -171,7 +171,7 @@ box(lwd=1)
 
 par(fig = c(0, 1, 0, 1), oma = c(0, 0, 0, 0), mar = c(0, 0, 0, 0), new = TRUE)
 plot(0, 0, type = "n", bty = "n", xaxt = "n", yaxt = "n")
-legend(-1.08,1.1, legend = c("Population", "Secchi", "TP","Chl", 
+legend(-1.08,1.1, legend = c("Census", "Secchi", "TP","Chl", 
                             "TN","NO3", "NH4",
                             "DOC", "Color"), 
        pch = 16, pt.cex = 1.5, bty = "n", col = c("black", my.cols), cex =1, horiz = TRUE)
@@ -196,13 +196,15 @@ box(lwd=1)
 mtext(side=1,text = "Area (ha)",line=2.2)
 par(fig = c(0, 1, 0, 1), oma = c(0, 0, 0, 0), mar = c(0, 0, 0, 0), new = TRUE)
 plot(0, 0, type = "n", bty = "n", xaxt = "n", yaxt = "n")
-legend(-1.,1.1, legend = c("Population", "Chl", 
+legend(-1.,1.1, legend = c("Census", "Chl", 
                              "TN",
                              "DOC"), 
        pch = 16, pt.cex = 1.3, bty = "n", col = c("black", my.cols[c(2,4,7)]), cex =1, horiz = TRUE)
 dev.off()
 
+
 # residence time proxy or WSA/LA
+#not appropriate for SoL since we used lakes <4ha - WSA data are considered unreliable for these lakes.
 dotchart2(pop_summ$res_time_proxy, labels = "", xlab = "WSA:LA", dotsize = 2, xlim = c(0, 150), 
           bty= "L", width.factor = .2, col = add.alpha('black', 0.7))
 dotchart2(tn_summ$res_time_proxy,  dotsize = 2, add = TRUE, col = my.cols[1])
@@ -221,7 +223,7 @@ dotchart2(doc_summ$prop_iso,  dotsize = 2, add = TRUE, col = my.cols[4])
 # add legend
 par(fig = c(0, 1, 0, 1), oma = c(0, 0, 0, 0), mar = c(0, 0, 0, 0), new = TRUE)
 plot(0, 0, type = "n", bty = "n", xaxt = "n", yaxt = "n")
-legend(-.9,1.05, legend = c("Population", "TN Sample", "TP Sample", "Chl Sample", "DOC Sample"), 
+legend(-.9,1.05, legend = c("Census", "TN Sample", "TP Sample", "Chl Sample", "DOC Sample"), 
        pch = 16, pt.cex = 2, bty = "n", col = c("black", my.cols), cex =1, horiz = TRUE)
 dev.off()
 

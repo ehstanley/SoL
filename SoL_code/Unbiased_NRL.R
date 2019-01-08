@@ -127,26 +127,26 @@ write_csv(x = summary.output,"SoL_data/unbiased_stats.csv")
 
 p1 <- ggplot(data = chla_med,aes(value + 0.1, color=group,)) + stat_ecdf(geom="step") +
   theme_bw() + theme(legend.position = "none") +
-  xlab(bquote(Chla~(mu*g~L^-1))) + ylab("ECDF") + scale_x_log10() +
+  xlab(bquote(Chla~(mu*g~L^-1))) + ylab("ECDF") + #scale_x_log10() +
   scale_color_manual(breaks=c("Observed","Corrected"), values = c("grey","black")) +
   labs(color="Sample Population") +
   theme(text=element_text(size=10,  family="sans"))
 p1
 p2 <- ggplot(data = tn_calculated_med,aes(value + 0.1, color=group,)) + stat_ecdf(geom="step") +
   theme_bw() + theme(legend.position = "none") +
-  xlab(bquote(Total~Nitrogen~(mu*g~L^-1))) + ylab("ECDF") + scale_x_log10() +
+  xlab(bquote(Total~Nitrogen~(mu*g~L^-1))) + ylab("ECDF") + #scale_x_log10() +
   scale_color_manual(breaks=c("Observed","Corrected"), values = c("grey","black"))  +
   theme(text=element_text(size=10,  family="sans"))
 p2
 p3 <- ggplot(data = doc_med,aes(value + 0.1, color=group,)) + stat_ecdf(geom="step") +
   theme_bw() + theme(legend.position = "none") +
-  xlab(bquote(DOC~(mg~L^-1))) + ylab("ECDF") + scale_x_log10() +
+  xlab(bquote(DOC~(mg~L^-1))) + ylab("ECDF") + #scale_x_log10() +
   scale_color_manual(breaks=c("Observed","Corrected"), values = c("grey","black"))  +
   theme(text=element_text(size=10,  family="sans"))
 p3
 p4 <- ggplot(chla_med, aes(x=reorder(group,desc(group)), y=value+.1, color=group)) +
   geom_violin() + theme_bw() +
-  geom_boxplot(width=0.1) + scale_y_log10() +
+  geom_boxplot(width=0.1) + #scale_y_log10() +
   theme_bw() + theme(legend.position = "none") +
   theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
   ylab(bquote(Chla~(mu*g~L^-1))) + xlab("") +
@@ -155,7 +155,7 @@ p4 <- ggplot(chla_med, aes(x=reorder(group,desc(group)), y=value+.1, color=group
 p4
 p5 <- ggplot(tn_combined_med, aes(x=reorder(group,desc(group)), y=value+.1, color=group)) +
   geom_violin() + theme_bw() +
-  geom_boxplot(width=0.1) + scale_y_log10() +
+  geom_boxplot(width=0.1) + #scale_y_log10() +
   theme_bw() + theme(legend.position = "none") +
   theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
   ylab(bquote(Total~Nitrogen~(mu*g~L^-1))) + xlab("") +
@@ -164,7 +164,7 @@ p5 <- ggplot(tn_combined_med, aes(x=reorder(group,desc(group)), y=value+.1, colo
 p5
 p6 <- ggplot(doc_med, aes(x=reorder(group,desc(group)), y=value+.1, color=group)) +
   geom_violin() + theme_bw() +
-  geom_boxplot(width=0.1) + scale_y_log10() +
+  geom_boxplot(width=0.1) + #scale_y_log10() +
   theme_bw() + theme(legend.position = "none") +
   theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
   ylab(bquote(DOC~(mg~L^-1))) + xlab("") +
